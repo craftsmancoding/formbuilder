@@ -7,18 +7,10 @@ class Form {
     public static $parser = '\\Formbuilder\\Form::defaultParse';
     public static $idPrefix = '';
     public static $namePrefix = '';
+    public static $instance;
+    public static $opened = false; // Form::open() sets this to true, used to group output in method chaining
+    public static $output = '';
     
-/*
-<input list="browsers">
-
-<datalist id="browsers">
-  <option value="Internet Explorer">
-  <option value="Firefox">
-  <option value="Chrome">
-  <option value="Opera">
-  <option value="Safari">
-</datalist>
-*/    
     // new in HTML 5: datalist, keygen, range, output
     // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
     public static $tpls = array(
@@ -54,6 +46,10 @@ class Form {
         'textarea'      => '<textarea name="[+name+]" id="[+id+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
     );
 
+    public function __toString() {
+        return static::$output;
+    }
+    
     /**
      * Determine if an array is associative. See http://bit.ly/1lIXeN8
      *
@@ -97,6 +93,14 @@ class Form {
     public static function setTpl($name,$str) {
         static::$tpls[$name] = $str;
     }
+
+    /**
+     * Bulk Override of our default formatting strings 
+     *
+     */
+    public static function setTpls($array) {
+        static::$tpls = $array;
+    }
     
     /**
      * Parse the template string ($tpl) replacing any placeholders
@@ -131,6 +135,24 @@ class Form {
         return trim($tpl);
     }
 
+    /**
+     * Used in method chaining: we return an instance of this object
+     * so we can either print its result via __toString() or chain
+     * additional methods onto it.
+     *
+     */
+    public static function returnOutput($output,$args=array()) {
+        if (empty(static::$instance)) {
+            static::$instance = new Form();
+        }
+        if (static::$opened) {
+            static::$output .= $output;
+        }
+        else {
+            static::$output = $output;
+        }
+        return static::$instance;
+    }
     
     /**
      * Convert a wild string into something viable as a CSS id.
@@ -184,6 +206,17 @@ class Form {
 
         return self::parse($tpl,$args);
         
+    }
+
+    /**
+     * Open a form.  Testing this with method chaining (i.e. fluid interface)
+     *
+     *
+     */
+    public static function open($args=array()) {
+        if (static::$opened) static::$output = ''; // reset
+        static::$opened = true;
+        return static::returnOutput('<form>');
     }
 
     /**
@@ -666,6 +699,10 @@ class Form {
         $args['value'] = htmlentities($value);
 
         return self::parse($tpl,$args);        
+    }
+
+    public static function test($name) {
+        return static::returnOutput('<input name="'.$name.'">');    
     }
 
     /**

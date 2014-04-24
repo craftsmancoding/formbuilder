@@ -60,4 +60,12 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     
     }
     
+    
+    public function testChain() {
+    
+        Formbuilder\Form::open()->test('xxx');    
+        print Formbuilder\Form::open()->test('test');    
+        exit;
+    }
+    
 }
