@@ -20,32 +20,43 @@ class Form {
 </datalist>
 */    
     // new in HTML 5: datalist, keygen, range, output
+    // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
     public static $tpls = array(
-        'checkbox'      => '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/><input type="hidden" name="[+name+]" id="[+id+]" value="[+checked_value+]" [+is_checked+][+extra+]/>',
+        'checkbox'      => '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/><input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" [+is_checked+][+extra+]/>',
+        'color'         => '',
         'datalist'      => '<input list="[+id+]" name="[+name+]" id="[+id+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>',
         'data'          => '<option value="[+value+]">',
+        'date'          => '',
+        'datetime'      => '',
+        'datetime-local'    => '',
         'dropdown'      => '<select name="[+name+]" id="[+id+]" [+extra+]>[+options+]</select>',  
         'description'   => '<p>[+description+]</p>',
-        'file'          => '',  
+        'email'         => '',
+        // used by the multicheck
+        'fieldset'      => '<fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>',
+        'file'          => '<input type="file" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',  
         'hidden'        => '<input type="hidden" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'label'         => '<label for="[+id+]">[+label+]</label>',
         'keygen'        => '<keygen name="[+name+]" id="[+id+]" [+extra+]>',
-        'multiselect'   => '',
-        'multicheck'    => '',
+        'month'         => '',        
+        'multiselect'   => '<select name="[+name+][]" id="[+id+]" multiple="multiple" [+extra+]>[+options+]</select>',
+        'multicheck'    => '<input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]"[+is_checked+] [+extra+]/> [+label+]<br/>',
+        'number'        => '',
         'optgroup'      => '<optgroup label="[+label+]">[+options+]</optgroup>',
         'option'        => '<option value="[+value+]"[+is_selected+]>[+label+]</option>',
-        'output'        => '<output name="[+name+]" id="[+id+]" for="[+for+]"></output>',
+        'output'        => '<output name="[+name+]" id="[+id+]" for="[+for+]" [+extra+]>[+value+]</output>',
         'password'      => '<input type="password" name="[+name+]" id="[+id+]" value="" [+extra+]/>',
         'radio'         => '<input type="radio" name="[+name+]" id="[+id+]" value="[+value+]"[+is_checked+] [+extra+]> [+label+]<br/>',
-        'range'         => '<input type="range" id="[+id+]" name="[+name+] value="[+value+]" [+extra+]>',
+        'range'         => '<input type="range" id="[+id+]" name="[+name+] value="[+value+]" min="[+min+]" max="[+max+]" [+extra+]/>',
+        'search'        => '',
         'submit'        => '<input type="submit" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'text'          => '<input type="text" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'textarea'      => '<textarea name="[+name+]" id="[+id+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
     );
 
     /**
-     * Determine if an array is associative or not.
-     * See http://bit.ly/1lIXeN8
+     * Determine if an array is associative. See http://bit.ly/1lIXeN8
+     *
      * @param array $array
      * @return boolean if array is an associative array (hash)
      */
@@ -136,6 +147,7 @@ class Form {
      * Convert a wild string into something viable as a field name attribute.
      *
      * @param string $str
+     * @param boolean $is_array set to true if the name must store an array
      * @return string (filtered)
      */
     public static function getName($str) {
@@ -175,44 +187,20 @@ class Form {
     }
 
     /**
-     * Radio buttons
-     *
-     * Functionally these are the same as a dropdown, but the formatting here is more problematic.
-     * We stack instances of the 'radio' tpl, one on top of the other.
+     * File input. 
      *
      * @param string $name
-     * @param array $options either a simple array or key/value hash
+     * @param string $value current value
      * @param array $args additional arguments
-     * @param string $value -- current value
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function radio($name,$options=array(),$value='',$args=array(),$tpl=null) {
-        
+    public static function file($name,$value='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $output = '';
-        
-        // Unique key/values
-        if (self::isHash($options)) {
-            foreach ($options as $k => $v) {
-                $args['value'] = htmlentities($k);
-                $args['label'] = trim($v);
-                $args['is_checked'] = ($k == $value)? ' checked="checked"': '';
-                $output .= self::parse($tpl,$args); 
-            }
-        }
-        // Simple options
-        else {
-            foreach ($options as $k) {
-                $args['value'] = htmlentities($k);
-                $args['label'] = trim($k);
-                $args['is_checked'] = ($k == $value)? ' checked="checked"': '';
-                $output .= self::parse($tpl,$args);                 
-            }
-        }
-        
-        return $output;
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
     }
 
     /**
@@ -346,6 +334,242 @@ class Form {
 
         return self::parse($tpl,$args);        
     }
+
+    /**
+     * keygen field (HTML 5 only)
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function keygen($name,$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = '';
+
+        return self::parse($tpl,$args);        
+    }
+
+
+    /**
+     * Multicheck : functionally this is equivalent to the multiselect, but a series of checkboxes
+     * offers an alternative view.  We stack together the parsed instances of the multicheck tpl or 
+     * fieldset tpls (similar to how we stack parsed radio tpls).  Note that for the multi-check, 
+     * there is no need for the trickery we use in the regular checkbox where a hidden field is 
+     * paired with each checkbox to ensure a value.
+     *
+     * Note that the "name" parameter must reference an array!
+     * E.g. name="characters[]" -- checkout the 'multicheck' tpl to see where this is done.
+     *
+     * Flexible options are possible:
+     *
+     *  1. provide a simple array of $options if the stored option value is the same as the label, e.g.
+     *      array('x') results in  <option value="x">x</option>
+     *
+     *  2. provide an associative array of $options if you want the visible label to differ, e.g.
+     *      array('x'=>'X-men') results in <option value="x">X-men</option>
+     *
+     *  3. fieldsets with legends are possible if you provide a more deeply nested array of $options, e.g.
+     *      array(
+     *       'X-men' => 
+     *          array(
+     *           'w' => 'Wolverine',
+     *           'm' => 'Magento',
+     *          ),
+     *       'Marvel' =>
+     *          array(
+     *           's' => 'Spiderman',
+     *          )
+     *       )
+     *      renders as 
+     *          <fieldset>
+     *              <legend>X-men</legend>
+     *              <!-- checkboxes... -->
+     *          </fieldset>
+     *          <fieldset>
+     *              <legend>Marvel</legend>
+     *              <!-- checkboxes... -->
+     *          </fieldset>
+     *
+     * @param string $name
+     * @param array $options either a simple array or key/value hash or a complex array to define optgroup
+     * @param array $value -- current values
+     * @param array $args additional arguments including 'field_tpl' for granular format control.
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function multicheck($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
+        
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!is_array($values)) $values = array($values); // <-- catch typos
+        if (!isset($args['fieldset_tpl'])) $args['fieldset_tpl'] = static::$tpls['fieldset'];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $output = '';
+        // Complex with Fieldsets
+        if (self::isComplex($options)) {
+            foreach($options as $legend => $fields) {
+                // <fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>
+                $fieldset_args = array('legend' => $legend, 'fields'=>'');
+                // key/value sub-options
+                if (self::isHash($fields)) {
+                    foreach ($fields as $k => $v) {
+                        $args['value'] = htmlentities($k);
+                        $args['label'] = $v;
+                        $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
+                        $fieldset_args['fields'] .= self::parse($tpl,$args); 
+                    }
+                }
+                // simple sub-options
+                else {
+                    foreach ($fields as $k) {
+                        $args['value'] = htmlentities($k);
+                        $args['label'] = $k;
+                        $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
+                        $fieldset_args['fields'] .= self::parse($tpl,$args);               
+                    }
+                } 
+                $output .= self::parse($args['fieldset_tpl'],$fieldset_args);
+            }
+        }
+        // Unique key/values
+        elseif (self::isHash($options)) {
+            foreach ($options as $k => $v) {
+                $args['value'] = htmlentities($k);
+                $args['label'] = $v;
+                $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
+                $output .= self::parse($tpl,$args); 
+            }
+        }
+        // Simple options
+        // <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+checked_value+]" [+is_checked+][+extra+]/> [+label+]<br/>
+        else {
+            foreach ($options as $k) {
+                $args['value'] = htmlentities($k);
+                $args['label'] = $k;
+                $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
+                $output .= self::parse($tpl,$args);                 
+            }
+        }
+        
+        return $output;
+
+    }
+
+    /**
+     * Multiselect : for selecting multiple options from a list. See also multicheck.
+     * This is a very close copy of the dropdown function, but instead of one current value, this
+     * supports an array of values. Note that the "name" parameter must reference an array!
+     * E.g. name="characters[]" -- checkout the 'multiselect' tpl.
+     *
+     * Flexible options are possible:
+     *
+     *  1. provide a simple array of $options if the stored option value is the same as the label, e.g.
+     *      array('x') results in  <option value="x">x</option>
+     *
+     *  2. provide an associative array of $options if you want the visible label to differ, e.g.
+     *      array('x'=>'X-men') results in <option value="x">X-men</option>
+     *
+     *  3. option groups are possible if you provide a more deeply nested array of $options, e.g.
+     *      array(
+     *       'X-men' => 
+     *          array(
+     *           'w' => 'Wolverine',
+     *           'm' => 'Magento',
+     *          ),
+     *       'Marvel' =>
+     *          array(
+     *           's' => 'Spiderman',
+     *          )
+     *       )
+     *      renders as 
+     *          <optgroup label="X-men">
+     *              <option value="w">Wolverine</option>
+     *              <option value="m">Magento</option>
+     *          </optgroup>
+     *          <optgroup label="Marvel">
+     *              <option value="s">Spiderman</option>
+     *          </optgroup>
+     *
+     * @param string $name
+     * @param array $options either a simple array or key/value hash or a complex array to define optgroup
+     * @param array $value -- current values
+     * @param array $args additional arguments including 'option_tpl' and 'optgroup_tpl' for granular format control.
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function multiselect($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
+        
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!is_array($values)) $values = array($values); // <-- catch typos
+        if (!isset($args['option_tpl'])) $args['option_tpl'] = static::$tpls['option'];
+        if (!isset($args['optgroup_tpl'])) $args['optgroup_tpl'] = static::$tpls['optgroup'];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['options'] = '';
+        // Complex with Option Groups
+        if (self::isComplex($options)) {
+            foreach($options as $optgroup_label => $subopts) {
+                $optgroup_args = array('label' => $optgroup_label, 'options'=>'');
+                // key/value sub-options
+                if (self::isHash($subopts)) {
+                    foreach ($subopts as $k => $v) {
+                        $opt_args = array('value' => htmlentities($k), 'label' => htmlentities($v));
+                        $opt_args['is_selected'] = (in_array($k,$values))? ' selected="selected"': '';
+                        $optgroup_args['options'] .= self::parse($args['option_tpl'],$opt_args); 
+                    }
+                }
+                // simple sub-options
+                else {
+                    foreach ($subopts as $k) {
+                        $opt_args = array('value' => htmlentities($k), 'label'=> htmlentities($k));
+                        $opt_args['is_selected'] = (in_array($k,$values))? ' selected="selected"': '';
+                        $optgroup_args['options'] .= self::parse($args['option_tpl'],$opt_args);                 
+                    }
+                } 
+                $args['options'] .= self::parse($args['optgroup_tpl'],$optgroup_args);             
+            }
+        }
+        // Unique key/values
+        elseif (self::isHash($options)) {
+            foreach ($options as $k => $v) {
+                $opt_args = array('value' => htmlentities($k), 'label' => htmlentities($v));
+                $opt_args['is_selected'] = (in_array($k,$values))? ' selected="selected"': '';
+                $args['options'] .= self::parse($args['option_tpl'],$opt_args); 
+            }
+        }
+        // Simple options
+        else {
+            foreach ($options as $k) {
+                $opt_args = array('value' => htmlentities($k), 'label'=> htmlentities($k));
+                $opt_args['is_selected'] = (in_array($k,$values))? ' selected="selected"': '';
+                $args['options'] .= self::parse($args['option_tpl'],$opt_args);                 
+            }
+        }
+        
+        return self::parse($tpl,$args);
+
+    }
+    
+    /**
+     * Output field (HTML 5 only)
+     * This should correspond to an "oninput" event in the <form> tag. 
+     *
+     * @param string $name
+     * @param mixed $for specifies the element(s) used in the calculation (separated by space). If array, will implode.
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function output($name,$for='',$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['for'] = (is_array($for)) ? implode(' ',$for) : $for;
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
     
     /**
      * Standard password field. Like text, but we don't pass a value. 
@@ -363,6 +587,69 @@ class Form {
 
         return self::parse($tpl,$args);        
     }
+
+    /**
+     * Radio buttons
+     *
+     * Functionally these are the same as a dropdown, but the formatting here is more problematic.
+     * We stack instances of the 'radio' tpl, one on top of the other.
+     *
+     * @param string $name
+     * @param array $options either a simple array or key/value hash
+     * @param array $args additional arguments
+     * @param string $value -- current value
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function radio($name,$options=array(),$value='',$args=array(),$tpl=null) {
+        
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $output = '';
+        
+        // Unique key/values
+        if (self::isHash($options)) {
+            foreach ($options as $k => $v) {
+                $args['value'] = htmlentities($k);
+                $args['label'] = trim($v);
+                $args['is_checked'] = ($k == $value)? ' checked="checked"': '';
+                $output .= self::parse($tpl,$args); 
+            }
+        }
+        // Simple options
+        else {
+            foreach ($options as $k) {
+                $args['value'] = htmlentities($k);
+                $args['label'] = trim($k);
+                $args['is_checked'] = ($k == $value)? ' checked="checked"': '';
+                $output .= self::parse($tpl,$args);                 
+            }
+        }
+        
+        return $output;
+    }
+
+
+    /**
+     * Range (HTML 5 only)
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function range($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        if (!isset($args['min'])) $args['min'] = 1;
+        if (!isset($args['max'])) $args['max'] = 100;
+
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
 
     /**
      * Let there be text. 
