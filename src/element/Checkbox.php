@@ -5,7 +5,8 @@ class Checkbox extends \Formbuilder\Element {
     /**
      * We use a simple trick for checkboxes: add a hidden form field immediately prior to the checkbox. 
      * If the checkbox is not checked, the hidden field will submit its default value.
-     * Pass a "default" key in your $args to set the checkbox's unchecked value.
+     * Default behavior is to use 1|0 as checked|unchecked values.  If you want to use something different
+     * then pass "checked_value" and "unchecked_value" in the $args.
      *
      */
     public function draw($name,$value=0,$args=array(),$tpl='<input type="hidden" name="[+name+]" value="0"/><input type="hidden" name="[+name+]" id="[+id+]" value="1" [+is_checked+][+extra+]/>') {

@@ -69,6 +69,8 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
         $actual = Formbuilder\Form::checkbox('test',1);  
         $expected = '<input type="hidden" name="test" value="0"/><input type="hidden" name="test" id="test" value="1"  checked="checked"/>';
         $this->assertEquals($actual, $expected);
+        
+        // on|off instead of 1|0
 /*
         $actual = Formbuilder\Form::textarea('test','gnarrrr');  
         $expected = '<textarea name="test" id="test" rows="4" cols="40" >gnarrrr</textarea>';
