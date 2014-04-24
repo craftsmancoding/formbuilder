@@ -18,24 +18,74 @@
 
 class autoloadTest extends PHPUnit_Framework_TestCase {
 
-        
-    public function testText() {
 
-        $actual = Formbuilder\Form::text('test');  
-        $expected = '<input type="text" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
-        
-        $actual = Formbuilder\Form::text('test','gnarrrr');  
-        $expected = '<input type="text" name="test" id="test" value="gnarrrr" />';
-        $this->assertEquals($actual, $expected);
+    public function testPassword() {
 
-        $args = array();
-        $args['extra'] = 'onclick="alert(\'something...\');"';
-        $actual = Formbuilder\Form::text('test','sample',$args);  
-        $expected = '<input type="text" name="test" id="test" value="sample" onclick="alert(\'something...\');"/>';
+        $actual = Formbuilder\Form::password('test');  
+        $expected = '<input type="password" name="test" id="test" value="" />';
         $this->assertEquals($actual, $expected);
         
     }
+
+    public function testHidden() {
+
+        $actual = Formbuilder\Form::hidden('test');  
+        $expected = '<input type="hidden" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+
+    public function testDatalist() {
+        $actual = Formbuilder\Form::datalist('test',array('x','y','z'));  
+        $expected = '<input list="test" name="test" id="test" ><datalist id="test"><option value="x"><option value="y"><option value="z"></datalist>';
+        $this->assertEquals($actual, $expected);
+    }
+            
+    public function testDropdown() {
+
+        // Simple dropdown
+        $options = array('x','y','z');
+        $actual = Formbuilder\Form::dropdown('test',$options);  
+        $expected = '<select name="test" id="test" ><option value="x">x</option><option value="y">y</option><option value="z">z</option></select>';
+        $this->assertEquals($actual, $expected);
+        
+        // key/value 
+        $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
+        $actual = Formbuilder\Form::dropdown('test',$options);  
+        $expected = '<select name="test" id="test" ><option value="x">xRay</option><option value="y">Yellow</option><option value="z">Zebra</option></select>';
+        $this->assertEquals($actual, $expected);
+        
+        // Option Groups with simple options
+        $options = array(
+            'Dogs' => array('Husky','Labrador'),
+            'Cats' => array('Maine Coon'),
+        );
+        $actual = Formbuilder\Form::dropdown('test',$options);  
+        $expected = '<select name="test" id="test" ><optgroup label="Dogs"><option value="Husky">Husky</option><option value="Labrador">Labrador</option></optgroup><optgroup label="Cats"><option value="Maine Coon">Maine Coon</option></optgroup></select>';
+        $this->assertEquals($actual, $expected);
+    }
+
+    public function testRadio() {
+
+        // Simple Radio
+        $options = array('x','y','z');
+        $actual = Formbuilder\Form::radio('test',$options);
+        $expected = '<input type="radio" name="test" id="test" value="x" > x<br/><input type="radio" name="test" id="test" value="y" > y<br/><input type="radio" name="test" id="test" value="z" > z<br/>';
+        $this->assertEquals($actual, $expected);
+        
+        $options = array('x','y','z');
+        $actual = Formbuilder\Form::radio('test',$options,'y');
+        $expected = '<input type="radio" name="test" id="test" value="x" > x<br/><input type="radio" name="test" id="test" value="y" checked="checked" > y<br/><input type="radio" name="test" id="test" value="z" > z<br/>';
+        $this->assertEquals($actual, $expected);        
+        
+        // key/value 
+        $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
+        $actual = Formbuilder\Form::radio('test',$options);  
+        $expected = '<input type="radio" name="test" id="test" value="x" > xRay<br/><input type="radio" name="test" id="test" value="y" > Yellow<br/><input type="radio" name="test" id="test" value="z" > Zebra<br/>';
+        $this->assertEquals($actual, $expected);        
+    }
+
     
 
     public function testTextarea() {
