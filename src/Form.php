@@ -15,32 +15,34 @@ class Form {
     // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
     public static $tpls = array(
         'checkbox'      => '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/><input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" [+is_checked+][+extra+]/>',
-        'color'         => '',
+        'color'         => '<input type="color" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'datalist'      => '<input list="[+id+]" name="[+name+]" id="[+id+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>',
         'data'          => '<option value="[+value+]">',
-        'date'          => '',
-        'datetime'      => '',
-        'datetime-local'    => '',
+        'date'          => '<input type="date" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
+        'datetime_local'    => '<input type="datetime-local" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'dropdown'      => '<select name="[+name+]" id="[+id+]" [+extra+]>[+options+]</select>',  
         'description'   => '<p>[+description+]</p>',
-        'email'         => '',
+        'email'         => '<input type="email" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
+        'time'         => '<input type="time" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
+        'week'         => '<input type="week" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
+        'url'         => '<input type="url" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         // used by the multicheck
         'fieldset'      => '<fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>',
         'file'          => '<input type="file" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',  
         'hidden'        => '<input type="hidden" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'label'         => '<label for="[+id+]">[+label+]</label>',
         'keygen'        => '<keygen name="[+name+]" id="[+id+]" [+extra+]>',
-        'month'         => '',        
+        'month'         => '<input type="month" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',        
         'multiselect'   => '<select name="[+name+][]" id="[+id+]" multiple="multiple" [+extra+]>[+options+]</select>',
         'multicheck'    => '<input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]"[+is_checked+] [+extra+]/> [+label+]<br/>',
-        'number'        => '',
+        'number'        => '<input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" [+extra+]/>',
         'optgroup'      => '<optgroup label="[+label+]">[+options+]</optgroup>',
         'option'        => '<option value="[+value+]"[+is_selected+]>[+label+]</option>',
         'output'        => '<output name="[+name+]" id="[+id+]" for="[+for+]" [+extra+]>[+value+]</output>',
         'password'      => '<input type="password" name="[+name+]" id="[+id+]" value="" [+extra+]/>',
         'radio'         => '<input type="radio" name="[+name+]" id="[+id+]" value="[+value+]"[+is_checked+] [+extra+]> [+label+]<br/>',
         'range'         => '<input type="range" id="[+id+]" name="[+name+] value="[+value+]" min="[+min+]" max="[+max+]" [+extra+]/>',
-        'search'        => '',
+        'search'        => '<input type="search" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'submit'        => '<input type="submit" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'text'          => '<input type="text" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'textarea'      => '<textarea name="[+name+]" id="[+id+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
@@ -727,6 +729,197 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         
         return self::parse($tpl,$args);   
+    }
+
+    /**
+     * HTML5 color input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function color($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 date input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function date($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 datetime_local input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function datetime_local($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 email input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function email($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 month input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function month($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 number input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param int $min current min
+     * @param int $max current max
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function number($name,$min=0,$max=10,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+        $args['min'] = (int) $min;
+        $args['max'] = (int) $max;
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 search input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function search($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 time input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function time($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 week input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function week($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 url input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function url($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
+    }
+
+    /**
+     * HTML5 submit input. 
+     *
+     * @param string $name
+     * @param string $value current value
+     * @param array $args additional arguments
+     * @param string $tpl defaults to tpl provided by the class
+     */
+    public static function submit($name,$value='',$args=array(),$tpl=null) {
+        if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
+        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $args['name'] = self::getName($name);
+        $args['value'] = htmlentities($value);
+
+        return self::parse($tpl,$args);        
     }
 
 }
