@@ -236,8 +236,88 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
         
     }
 
+    public function testColor() {
 
-  
+        $actual = Formbuilder\Form::color('test');  
+        $expected = '<input type="color" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testDate() {
+
+        $actual = Formbuilder\Form::date('test');  
+        $expected = '<input type="date" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testDatetimeLocal() {
+
+        $actual = Formbuilder\Form::datetime_local('test');  
+        $expected = '<input type="datetime-local" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
     
-    
+    public function testEmail() {
+        $args = array();
+        $args['id'] = 'testemail';
+        $actual = Formbuilder\Form::email('test','',$args);  
+        $expected = '<input type="email" name="test" id="testemail" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testMonth() {
+        $actual = Formbuilder\Form::month('test','',array('extra'=>'class="something"'));  
+        $expected = '<input type="month" name="test" id="test" value="" class="something"/>';
+        $this->assertEquals($actual, $expected);
+    }
+
+    public function testNumber() {
+        $actual = Formbuilder\Form::number('test',1,100);  
+        $expected = '<input type="number" name="test" id="test" min="1" max="100" value="" />';
+        $this->assertEquals($actual, $expected);
+    }
+
+    public function testSearch() {
+
+        $actual = Formbuilder\Form::search('test');  
+        $expected = '<input type="search" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testTime() {
+
+        $actual = Formbuilder\Form::time('test');  
+        $expected = '<input type="time" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testWeek() {
+
+        $actual = Formbuilder\Form::week('test');  
+        $expected = '<input type="week" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testUrl() {
+
+        $actual = Formbuilder\Form::url('test');  
+        $expected = '<input type="url" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
+
+    public function testSubmit() {
+
+        $actual = Formbuilder\Form::submit('test');  
+        $expected = '<input type="submit" name="test" id="test" value="" />';
+        $this->assertEquals($actual, $expected);
+        
+    }
 }
