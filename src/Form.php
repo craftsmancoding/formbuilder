@@ -46,6 +46,9 @@ class Form {
         'textarea'      => '<textarea name="[+name+]" id="[+id+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
     );
 
+    /**
+     * Generates final output
+     */
     public function __toString() {
         return static::$output;
     }

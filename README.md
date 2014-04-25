@@ -1,28 +1,19 @@
 Formbuilder
 ===========
 
-In memory of of my dumb friends...
+In memory of my dumb friends.
 
 I grew tired of repeating myself myself.  This library is built to generate HTML forms in ways that are re-usable.
-I got tired of Symfonic noise with no docs.  Why you no document your code?  Without further ado...
+I got tired of Symfonic noise with no docs.  Why you no document your code?  
 
-Reality Check
-=============
+We are doing two things with this package: we are generating HTML forms and we are documenting how its done
+so the nice public peeps can actually use our code.  
 
-Just to center yourself as to what we're up to here, let's review the landscape.  An HTML form is created of 
-fields (a.k.a. form elements).  Each element *requires* a name to identify its value in the $_POST or $_GET array.
-E.g. a field like <input type="text" name="insane" value="membrane"/> will populate $_POST['insane'] when posted.
-
-In order for us to create a valid form element, we need to know the following:
-
-1. What kind of element is it?  (required: text, textarea, password, etc.)
-2. What is the name of the element? (required)
-3. What other parameters do you want this element to have? (special sauce like a CSS class or an onclick etc.)
-4. How should the element be formatted?  Do you want to specify a custom formatting string?  (optional)
+Without further ado...
 
 
-Supported Inputs
-================
+## Supported Inputs
+
 
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
@@ -52,8 +43,7 @@ the supported HTML input types, but some (like "dropdown" or "multicheck") offer
 * textarea - a standard textarea
 
 
-Creating Form Elements
-======================
+## Creating Form Elements
 
 In the simplest invocation, you just need to call the function corresponding to an input type.
 Each function has its own signature; some fields require different types of data, so review
@@ -89,23 +79,65 @@ If you've got your namespace-fu going, you can simplify your call to something l
 
 That's a bit cleaner if it works for you.
 
+---------------------
 
-Text
-====
+# Input Types
 
-Textarea
-========
+## Text
 
-Checkbox
-========
+
+## Textarea
+
+
+## Checkbox
+
 
 Form::checkbox('mycheckbox', 1);
 
 
-Creating a Form
-===============
+## Dropdown
 
-The library here was designed to useable in various circumstances, including simple and advanced development flows.
+
+A dropdown implements a select field and allows you to select a single value.
+
+*Syntax:* `dropdown($name,$options=array(),$value='',$args=array(),$tpl=null)`
+
+### Example: Creating a range
+
+Use the [range](http://www.php.net/manual/en/function.range.php) function to generate numbers for you, e.g. 1 to 100 in increments of 5:
+
+    <?php
+    print \Formbuilder\Form::dropdown('mydropdown',range(1,100,5));
+    ?>
+
+### Example: Option Groups
+
+By supplying a nested array as your options, you can generate option groups:
+
+    <?php
+    $options = array(
+        'Birds' => array(
+            'bluebird'  => 'Sad Bluebird',
+            'crow'      => 'Black Crow',
+        ),
+        'Mammals' => array(
+            'cow'   => 'Mute Cow',
+            'dog'   => 'Good Dog',
+        )
+        'Reptiles' => array(
+            'croc'  => 'Crocodile',
+            'turtle' => 'Slow Turtle',
+        )
+    );
+    print \Formbuilder\Form::dropdown('mydropdown',$options);
+    ?>
+
+
+------------
+
+# Creating a Form
+
+This package was designed to useable in various circumstances, including simple and advanced development flows.
 
 Here's an example of some simple usage:
 
@@ -127,8 +159,8 @@ Here's a more advanced example:
 
 
 
-Customizing HTML
-================
+## Customizing HTML
+
 
 If the built-in HTML is not meeting your needs, you can override it with your own. You can do this in one of two ways:
 you can either pass a formatting string as an argument to each function, or you can set a global template.
@@ -151,8 +183,7 @@ See the class for various templates available.
 
 
 
-Customizing Parsing Function (ADVANCED)
-=======================================
+## Customizing Parsing Function (ADVANCED)
 
 This represents advanced modification: most users should not need to monkey with these behaviors.
 
