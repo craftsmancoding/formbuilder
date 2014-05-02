@@ -1,13 +1,12 @@
 Formbuilder
 ===========
 
-In memory of of my dumb friends...
+In memory of my dumb friends...
 
 I grew tired of repeating myself myself.  This library is built to generate HTML forms in ways that are re-usable.
 I got tired of Symfonic noise with no docs.  Why you no document your code?  Without further ado...
 
-Reality Check
-=============
+## Reality Check
 
 Just to center yourself as to what we're up to here, let's review the landscape.  An HTML form is created of 
 fields (a.k.a. form elements).  Each element *requires* a name to identify its value in the $_POST or $_GET array.
@@ -21,8 +20,7 @@ In order for us to create a valid form element, we need to know the following:
 4. How should the element be formatted?  Do you want to specify a custom formatting string?  (optional)
 
 
-Supported Inputs
-================
+## Supported Inputs
 
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
@@ -52,8 +50,7 @@ the supported HTML input types, but some (like "dropdown" or "multicheck") offer
 * textarea - a standard textarea
 
 
-Creating Form Elements
-======================
+## Creating Form Elements
 
 In the simplest invocation, you just need to call the function corresponding to an input type.
 Each function has its own signature; some fields require different types of data, so review
@@ -102,8 +99,7 @@ Checkbox
 Form::checkbox('mycheckbox', 1);
 
 
-Creating a Form
-===============
+## Creating a Form
 
 The library here was designed to useable in various circumstances, including simple and advanced development flows.
 
@@ -118,13 +114,25 @@ Here's an example of some simple usage:
 Here's a more advanced example:
 
     <?php
-        print \Formbuilder\Form::open(array('action'=>'/my/page'))
-            ->text('first_name')
-            ->text('last_name')
-            ->submit('Save')
-            ->close();
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name')
+        ->text('last_name')
+        ->submit('Save')
+        ->close();
     ?>
 
+
+    <?php
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
+        ->close();    
+    ?>
+
+
+Repopulating form values.
+
+To repopulate values...
 
 
 Customizing HTML

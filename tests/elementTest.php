@@ -16,7 +16,7 @@
  *
  */
 
-class autoloadTest extends PHPUnit_Framework_TestCase {
+class elementTest extends PHPUnit_Framework_TestCase {
 
     public function testCheckbox() {
 
@@ -209,7 +209,7 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($actual, $expected);        
     }
 
-    public function testTest() {
+    public function testText() {
 
         $actual = Formbuilder\Form::text('test');  
         $expected = '<input type="text" name="test" id="test" value="" />';

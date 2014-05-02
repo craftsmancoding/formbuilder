@@ -16,7 +16,7 @@
  *
  */
 
-class autoloadTest extends PHPUnit_Framework_TestCase {
+class formTest extends PHPUnit_Framework_TestCase {
 
         
     public function testParse() {
@@ -34,7 +34,7 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
         $expected = 'Hello Milo';
         $this->assertEquals($actual,$expected);        
 
-        // Alternate delineators
+        // Alternate placeholder glyphs
         $tpl = 'Hello {{person}}';
         $args = array('person' => 'Milo');
         $actual = Formbuilder\Form::defaultParse($tpl,$args,'{{','}}');  
@@ -63,8 +63,8 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     
     public function testChain() {
     
-        Formbuilder\Form::open()->test('xxx');    
-        print Formbuilder\Form::open()->test('test');    
+//        Formbuilder\Form::open()->test('xxx');    
+        print Formbuilder\Form::open()->text('test');    
         exit;
     }
     

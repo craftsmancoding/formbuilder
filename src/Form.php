@@ -1,4 +1,9 @@
 <?php
+/**
+ * Every chainable function should output indirectly via static::chain
+ *
+ *
+ */
 namespace Formbuilder;
 
 class Form {
@@ -23,6 +28,7 @@ class Form {
         'dropdown'      => '<select name="[+name+]" id="[+id+]" [+extra+]>[+options+]</select>',  
         'description'   => '<p>[+description+]</p>',
         'email'         => '<input type="email" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
+        'error'         => '<div class="error">[+message+]</div>',
         'time'         => '<input type="time" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'week'         => '<input type="week" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
         'url'         => '<input type="url" name="[+name+]" id="[+id+]" value="[+value+]" [+extra+]/>',
@@ -48,6 +54,9 @@ class Form {
         'textarea'      => '<textarea name="[+name+]" id="[+id+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
     );
 
+    /**
+     * The final output
+     */
     public function __toString() {
         return static::$output;
     }
@@ -143,7 +152,7 @@ class Form {
      * additional methods onto it.
      *
      */
-    public static function returnOutput($output,$args=array()) {
+    public static function chain($output,$args=array()) {
         if (empty(static::$instance)) {
             static::$instance = new Form();
         }
@@ -206,7 +215,7 @@ class Form {
             $args['is_checked'] = ' checked="checked"';        
         }
 
-        return self::parse($tpl,$args);
+        return static::chain(self::parse($tpl,$args));
         
     }
 
@@ -218,7 +227,7 @@ class Form {
     public static function open($args=array()) {
         if (static::$opened) static::$output = ''; // reset
         static::$opened = true;
-        return static::returnOutput('<form>');
+        return static::chain('<form>');
     }
 
     /**
@@ -235,7 +244,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));  
     }
 
     /**
@@ -260,7 +269,7 @@ class Form {
             $args['data'] .= self::parse($args['data_tpl'],$opt_args);                 
         }
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
 
     /**
@@ -349,7 +358,7 @@ class Form {
             }
         }
         
-        return self::parse($tpl,$args);
+        return static::chain(self::parse($tpl,$args));
 
     }
 
@@ -367,7 +376,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));  
     }
 
     /**
@@ -384,7 +393,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = '';
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
 
 
@@ -488,7 +497,7 @@ class Form {
             }
         }
         
-        return $output;
+        return static::chain($output);
 
     }
 
@@ -582,7 +591,7 @@ class Form {
             }
         }
         
-        return self::parse($tpl,$args);
+        return static::chain(self::parse($tpl,$args));
 
     }
     
@@ -603,7 +612,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
     
     /**
@@ -620,7 +629,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = '';
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
 
     /**
@@ -661,7 +670,7 @@ class Form {
             }
         }
         
-        return $output;
+        return static::chain($output);
     }
 
 
@@ -682,7 +691,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
 
 
@@ -700,12 +709,9 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args)); 
     }
 
-    public static function test($name) {
-        return static::returnOutput('<input name="'.$name.'">');    
-    }
 
     /**
      * Standard textarea field.
@@ -725,7 +731,7 @@ class Form {
         if (!isset($args['cols'])) $args['cols'] = 40;
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         
-        return self::parse($tpl,$args);   
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -742,7 +748,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -759,7 +765,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -776,7 +782,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -793,7 +799,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -810,7 +816,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -831,7 +837,7 @@ class Form {
         $args['min'] = (int) $min;
         $args['max'] = (int) $max;
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -848,7 +854,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -865,7 +871,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -882,7 +888,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -899,7 +905,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
     /**
@@ -916,7 +922,7 @@ class Form {
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities($value);
 
-        return self::parse($tpl,$args);        
+        return static::chain(self::parse($tpl,$args));
     }
 
 }
