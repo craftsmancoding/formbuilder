@@ -15,6 +15,7 @@ class Form {
     public static $instance;
     public static $opened = false; // Form::open() sets this to true, used to group output in method chaining
     public static $output = '';
+    public static $values = array();
     
     // new in HTML 5: datalist, keygen, range, output
     // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
@@ -188,6 +189,21 @@ class Form {
         // TODO: validate the brackets?  E.g. some[thing] is ok, but some][thing is not.
         return self::$namePrefix.preg_replace('/[^a-zA-Z0-9\-\_\[\]]/','_',$str);
     }
+
+    /**
+     * Get a value for a field.  Typically this is read out of the $_POST or $_GET array
+     * (e.g. when repopulating the form).
+     *
+     * @param string $str
+     * @param string $default
+     * @return string
+     */
+    public static function getValue($str,$default='') {
+        if (is_scalar($str) && isset(self::$values[self::$namePrefix.$str])) {
+            return self::$values[self::$namePrefix.$str]; 
+        }
+        return $default;
+    }
     
     /**
      * We use a simple trick for checkboxes: add a hidden form field immediately prior to the checkbox. 
@@ -209,7 +225,7 @@ class Form {
         if (!isset($args['unchecked_value'])) $args['unchecked_value'] = 0;
         
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);        
+        $args['value'] = htmlentities(self::getValue($name,$value));        
         $args['is_checked'] = '';
         if($value == $args['checked_value']) {
             $args['is_checked'] = ' checked="checked"';        
@@ -234,7 +250,7 @@ class Form {
      * File input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -242,7 +258,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));  
     }
@@ -318,6 +334,8 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $args['options'] = '';
+        $value = self::getValue($name,$value);
+        
         // Complex with Option Groups
         if (self::isComplex($options)) {
             foreach($options as $optgroup_label => $subopts) {
@@ -366,7 +384,7 @@ class Form {
      * Hidden field
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -374,7 +392,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));  
     }
@@ -383,7 +401,7 @@ class Form {
      * keygen field (HTML 5 only)
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -451,6 +469,8 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $output = '';
+        $values = self::getValue($name,$values);
+        
         // Complex with Fieldsets
         if (self::isComplex($options)) {
             foreach($options as $legend => $fields) {
@@ -551,6 +571,8 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $args['options'] = '';
+        $values = self::getValue($name,$values);
+        
         // Complex with Option Groups
         if (self::isComplex($options)) {
             foreach($options as $optgroup_label => $subopts) {
@@ -601,7 +623,7 @@ class Form {
      *
      * @param string $name
      * @param mixed $for specifies the element(s) used in the calculation (separated by space). If array, will implode.
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -610,7 +632,7 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['for'] = (is_array($for)) ? implode(' ',$for) : $for;
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args)); 
     }
@@ -619,7 +641,7 @@ class Form {
      * Standard password field. Like text, but we don't pass a value. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -650,7 +672,7 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $output = '';
-        
+        $value = self::getValue($name,$value); 
         // Unique key/values
         if (self::isHash($options)) {
             foreach ($options as $k => $v) {
@@ -678,7 +700,7 @@ class Form {
      * Range (HTML 5 only)
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -689,7 +711,7 @@ class Form {
         if (!isset($args['max'])) $args['max'] = 100;
 
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args)); 
     }
@@ -699,7 +721,7 @@ class Form {
      * Let there be text. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -707,7 +729,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args)); 
     }
@@ -719,14 +741,14 @@ class Form {
      * We set default values for "rows" and "cols".
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class     *
      */
     public static function textarea($name,$value='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
         if (!isset($args['rows'])) $args['rows'] = 4;
         if (!isset($args['cols'])) $args['cols'] = 40;
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -738,7 +760,7 @@ class Form {
      * HTML5 color input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -746,7 +768,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -755,7 +777,7 @@ class Form {
      * HTML5 date input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -763,7 +785,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -772,7 +794,7 @@ class Form {
      * HTML5 datetime_local input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -780,7 +802,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -789,7 +811,7 @@ class Form {
      * HTML5 email input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -797,7 +819,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -806,7 +828,7 @@ class Form {
      * HTML5 month input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -814,7 +836,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -823,7 +845,7 @@ class Form {
      * HTML5 number input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param int $min current min
      * @param int $max current max
      * @param array $args additional arguments
@@ -833,7 +855,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
         $args['min'] = (int) $min;
         $args['max'] = (int) $max;
 
@@ -844,7 +866,7 @@ class Form {
      * HTML5 search input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -852,7 +874,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -861,7 +883,7 @@ class Form {
      * HTML5 time input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -869,7 +891,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -878,7 +900,7 @@ class Form {
      * HTML5 week input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -886,7 +908,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -895,7 +917,7 @@ class Form {
      * HTML5 url input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -903,7 +925,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
@@ -912,7 +934,7 @@ class Form {
      * HTML5 submit input. 
      *
      * @param string $name
-     * @param string $value current value
+     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -920,10 +942,20 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities($value);
+        $args['value'] = htmlentities(self::getValue($name,$value));
 
         return static::chain(self::parse($tpl,$args));
     }
 
+
+
+    /**
+     * Pass $_POST or $_GET to this function to have the form fields repopulated
+     *
+     * @param array $array
+     */
+    public static function repopulateWith($array) {
+        static::$values = (array) $array;
+    }
 }
 /*EOF*/
