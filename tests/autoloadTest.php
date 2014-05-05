@@ -30,5 +30,17 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     
 //        $T = new Formbuilder\Element\Text();       
 //        $this->assertTrue(is_object($F), 'Text.');
+
+        $x = 'something|else';
+        $this->assertFalse(is_callable($x));
+        
+        $x = function ($val) { return $val; };
+        $this->assertTrue(is_callable($x));
+        
+        $val = call_user_func_array($x, array('hello'));
+        $this->assertEquals('hello',$val);
+        
+        
+        
     }
 }
