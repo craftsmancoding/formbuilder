@@ -18,7 +18,10 @@ class Validator {
         $rules = self::explodeRules($rules);
         
 		foreach ($rules as $field => $rule) {
-            $result = call_user_func_array($rule[0], $rule[1]);
+            $params = $rule[1];
+            $val = (isset($values[$field])) ? $values[$field] : null;
+            array_unshift($params, $val);  // The field value is the 1st arg
+            $result = call_user_func_array($rule[0], $params);
             if (!$result === true) {
                 self::$errors[$field] = $result;
             }
@@ -28,7 +31,7 @@ class Validator {
 	}
 
 	/**
-	 * Explode the rules into an array of rules.
+	 * Explode the rules into an array of rules, converting shorthand to callable
 	 *
 	 * Rule may be a callback or
 	 * {$function_name}
@@ -116,7 +119,7 @@ class Validator {
 	 * @param  mixed   $value
 	 * @return bool
 	 */
-	public function required($attribute, $value)
+	public static function required($attribute, $value)
 	{
 		if (is_null($value))
 		{

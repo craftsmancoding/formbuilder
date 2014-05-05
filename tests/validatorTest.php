@@ -20,7 +20,7 @@ class validatorTest extends PHPUnit_Framework_TestCase {
 
             
     
-    public function testChain() {
+    public function testExplodeRules() {
         
         $rules = array(
             'fieldname' => 'something'
@@ -33,7 +33,11 @@ class validatorTest extends PHPUnit_Framework_TestCase {
             ),
         );
 */
+//        print_r($actual); exit;
         $this->assertTrue(isset($actual['fieldname']));  
+        $this->assertTrue(is_array($actual['fieldname']));  
+        $this->assertTrue($actual['fieldname'][0][0]=='something');  
+        $this->assertTrue(is_array($actual['fieldname'][0][1]));  
         //$this->assertEquals($expected, $actual);
 
         //$this->assertEquals(trim_html($expected), trim_html($actual));
