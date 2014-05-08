@@ -73,12 +73,13 @@ That's a bit cleaner if it works for you.
 # Input Types
 
 ## Text
-=======
 
+**Syntax:** `text($name,$default='',$args=array(),$tpl=null)`
 
 
 ## Textarea
 
+**Syntax:** `dropdown($name,$options=array(),$default='',$args=array(),$tpl=null)`
 
 ## Checkbox
 
@@ -90,7 +91,7 @@ That's a bit cleaner if it works for you.
 
 A dropdown implements a select field and allows you to select a single value.
 
-*Syntax:* `dropdown($name,$options=array(),$value='',$args=array(),$tpl=null)`
+**Syntax:** `dropdown($name,$options=array(),$value='',$args=array(),$tpl=null)`
 
 ### Example: Creating a range
 

@@ -381,11 +381,11 @@ class Form {
      * then pass "checked_value" and "unchecked_value" in the $args.
      *
      * @param string $name
-     * @param string $value -- current value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function checkbox($name,$value=0,$args=array(),$tpl=null) {
+    public static function checkbox($name,$default=0,$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];    
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -393,9 +393,9 @@ class Form {
         if (!isset($args['unchecked_value'])) $args['unchecked_value'] = 0;
         
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));        
+        $args['value'] = htmlentities(self::getValue($name,$default));        
         $args['is_checked'] = '';
-        if($value == $args['checked_value']) {
+        if($args['value'] == $args['checked_value']) {
             $args['is_checked'] = ' checked="checked"';        
         }
         
@@ -412,15 +412,15 @@ class Form {
      * File input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function file($name,$value='',$args=array(),$tpl=null) {
+    public static function file($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         // enctype='multipart/form-data'
         self::setAttribute('enctype', 'multipart/form-data');
         self::setAttribute('method', 'post');
@@ -436,17 +436,17 @@ class Form {
      *
      * @param string $name
      * @param array $data your data points
-     * @param string $value -- current value     
+     * @param string $default value     
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function datalist($name,$data=array(),$value='',$args=array(),$tpl=null) {
+    public static function datalist($name,$data=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['data_tpl'])) $args['data_tpl'] = static::$tpls['data'];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         $args['data'] = '';
         
         foreach ($data as $k) {
@@ -494,11 +494,11 @@ class Form {
      *
      * @param string $name
      * @param array $options either a simple array or key/value hash or a complex array to define optgroup
-     * @param string $value -- current value
+     * @param string $default value
      * @param array $args additional arguments including 'option_tpl' and 'optgroup_tpl' for granular format control.
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function dropdown($name,$options=array(),$value='',$args=array(),$tpl=null) {
+    public static function dropdown($name,$options=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['option_tpl'])) $args['option_tpl'] = static::$tpls['option'];
@@ -506,7 +506,7 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $args['options'] = '';
-        $value = self::getValue($name,$value);
+        $value = self::getValue($name,$default);
         
         // Complex with Option Groups
         if (self::isComplex($options)) {
@@ -560,15 +560,15 @@ class Form {
      * Hidden field
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function hidden($name,$value='',$args=array(),$tpl=null) {
+    public static function hidden($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         // Hidden fields shouldn't use this... but just in case
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
@@ -835,16 +835,16 @@ class Form {
      *
      * @param string $name
      * @param mixed $for specifies the element(s) used in the calculation (separated by space). If array, will implode.
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function output($name,$for='',$value='',$args=array(),$tpl=null) {
+    public static function output($name,$for='',$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['for'] = (is_array($for)) ? implode(' ',$for) : $for;
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -856,7 +856,6 @@ class Form {
      * Standard password field. Like text, but we don't pass a value. 
      *
      * @param string $name
-     * @param string $value default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
@@ -881,10 +880,10 @@ class Form {
      * @param string $name
      * @param array $options either a simple array or key/value hash
      * @param array $args additional arguments
-     * @param string $value -- current value
+     * @param string $default value
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function radio($name,$options=array(),$value='',$args=array(),$tpl=null) {
+    public static function radio($name,$options=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -894,7 +893,7 @@ class Form {
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
         $output = '';
-        $value = self::getValue($name,$value); 
+        $value = self::getValue($name,$default); 
         // Unique key/values
         if (self::isHash($options)) {
             foreach ($options as $k => $v) {
@@ -922,18 +921,18 @@ class Form {
      * Range (HTML 5 only)
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function range($name,$value='',$args=array(),$tpl=null) {
+    public static function range($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         if (!isset($args['min'])) $args['min'] = 1;
         if (!isset($args['max'])) $args['max'] = 100;
 
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -946,15 +945,15 @@ class Form {
      * Let there be text. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function text($name,$value='',$args=array(),$tpl=null) {
+    public static function text($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -969,14 +968,14 @@ class Form {
      * We set default values for "rows" and "cols".
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class     *
      */
-    public static function textarea($name,$value='',$args=array(),$tpl=null) {
+    public static function textarea($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['rows'])) $args['rows'] = 4;
         if (!isset($args['cols'])) $args['cols'] = 40;
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -999,15 +998,15 @@ class Form {
      * HTML5 color input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function color($name,$value='',$args=array(),$tpl=null) {
+    public static function color($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1019,15 +1018,15 @@ class Form {
      * HTML5 date input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function date($name,$value='',$args=array(),$tpl=null) {
+    public static function date($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1039,15 +1038,15 @@ class Form {
      * HTML5 datetime_local input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function datetime_local($name,$value='',$args=array(),$tpl=null) {
+    public static function datetime_local($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1059,15 +1058,15 @@ class Form {
      * HTML5 email input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function email($name,$value='',$args=array(),$tpl=null) {
+    public static function email($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1079,15 +1078,15 @@ class Form {
      * HTML5 month input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function month($name,$value='',$args=array(),$tpl=null) {
+    public static function month($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1099,17 +1098,17 @@ class Form {
      * HTML5 number input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param int $min current min
      * @param int $max current max
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function number($name,$min=0,$max=10,$value='',$args=array(),$tpl=null) {
+    public static function number($name,$min=0,$max=10,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         $args['min'] = (int) $min;
         $args['max'] = (int) $max;
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
@@ -1123,15 +1122,15 @@ class Form {
      * HTML5 search input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function search($name,$value='',$args=array(),$tpl=null) {
+    public static function search($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1143,15 +1142,15 @@ class Form {
      * HTML5 time input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function time($name,$value='',$args=array(),$tpl=null) {
+    public static function time($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1163,15 +1162,15 @@ class Form {
      * HTML5 week input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function week($name,$value='',$args=array(),$tpl=null) {
+    public static function week($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1183,15 +1182,15 @@ class Form {
      * HTML5 url input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function url($name,$value='',$args=array(),$tpl=null) {
+    public static function url($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
@@ -1203,15 +1202,15 @@ class Form {
      * HTML5 submit input. 
      *
      * @param string $name
-     * @param string $value default value
+     * @param string $default value
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function submit($name,$value='',$args=array(),$tpl=null) {
+    public static function submit($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
-        $args['value'] = htmlentities(self::getValue($name,$value));
+        $args['value'] = htmlentities(self::getValue($name,$default));
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label']);
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
