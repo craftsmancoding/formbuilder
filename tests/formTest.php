@@ -71,5 +71,16 @@ class formTest extends PHPUnit_Framework_TestCase {
 
         //$this->assertEquals(trim_html($expected), trim_html($actual));
     }
+
+    public function testAction() {
+        // Need to reset this after setParser is called
+        Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
+        $actual = Formbuilder\Form::open('http://somewhere.com/page/x/y?z=123')->text('test')->close();    
+        $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="" /></form>';
+
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        //$this->assertEquals(trim_html($expected), trim_html($actual));
+    }
     
 }

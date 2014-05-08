@@ -813,10 +813,11 @@ class Form {
      *
      *
      */
-    public static function open($args=array(),$secure=true,$tpl=null) {
+    public static function open($action='',$args=array(),$secure=true,$tpl=null) {
         static::$instance = new Form();
         static::$opened = true;
         static::$output = '';
+        $args['action'] = htmlentities($action);
         if (!$tpl) $tpl = static::$tpls['form'];
         if (!isset($args['method'])) $args['method'] = 'post';
         $args['tpl'] = $tpl; // store as an attribute
