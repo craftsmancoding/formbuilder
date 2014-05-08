@@ -62,14 +62,6 @@ class formTest extends PHPUnit_Framework_TestCase {
     
     
     public function testChain() {
-<<<<<<< HEAD
-    
-/*
-        Formbuilder\Form::open()->test('xxx');    
-        print Formbuilder\Form::open()->test('test');    
-        exit;
-*/
-=======
         // Need to reset this after setParser is called
         Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
         $actual = Formbuilder\Form::open()->text('test')->close();    
@@ -78,7 +70,6 @@ class formTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         //$this->assertEquals(trim_html($expected), trim_html($actual));
->>>>>>> a3470cbc0fcb10a9dc19a5027a8680002ac3508d
     }
     
 }
