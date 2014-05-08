@@ -22,18 +22,18 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         // Unchecked
         $actual = Formbuilder\Form::checkbox('test');  
-        $expected = '<input type="hidden" name="test" value="0"/><input type="checkbox" name="test" id="test" value="1" />';
-        $this->assertEquals($actual, $expected);
+        $expected = '<input type="hidden" name="test" value="0"/> <input type="checkbox" name="test" id="test" value="1" />';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Checked 
         $actual = Formbuilder\Form::checkbox('test',1);  
-        $expected = '<input type="hidden" name="test" value="0"/><input type="checkbox" name="test" id="test" value="1"  checked="checked"/>';
-        $this->assertEquals($actual, $expected);
+        $expected = '<input type="hidden" name="test" value="0"/> <input type="checkbox" name="test" id="test" value="1"  checked="checked"/>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // on|off instead of 1|0
         $actual = Formbuilder\Form::checkbox('test','on',array('checked_value'=>'on','unchecked_value'=>'off'));  
-        $expected = '<input type="hidden" name="test" value="off"/><input type="checkbox" name="test" id="test" value="on"  checked="checked"/>';
-        $this->assertEquals($actual, $expected);
+        $expected = '<input type="hidden" name="test" value="off"/> <input type="checkbox" name="test" id="test" value="on"  checked="checked"/>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }  
 
@@ -43,8 +43,8 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
     public function testDatalist() {
         $actual = Formbuilder\Form::datalist('test',array('x','y','z'));  
-        $expected = '<input list="test" name="test" id="test" ><datalist id="test"><option value="x"><option value="y"><option value="z"></datalist>';
-        $this->assertEquals($actual, $expected);
+        $expected = '<input list="test" name="test" value="" id="test" ><datalist id="test"><option value="x"><option value="y"><option value="z"></datalist>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
     }
             
     public function testDropdown() {
@@ -53,13 +53,13 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $options = array('x','y','z');
         $actual = Formbuilder\Form::dropdown('test',$options);  
         $expected = '<select name="test" id="test" ><option value="x">x</option><option value="y">y</option><option value="z">z</option></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // key/value 
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::dropdown('test',$options);  
         $expected = '<select name="test" id="test" ><option value="x">xRay</option><option value="y">Yellow</option><option value="z">Zebra</option></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // Option Groups with simple options
         $options = array(
@@ -68,14 +68,14 @@ class elementTest extends PHPUnit_Framework_TestCase {
         );
         $actual = Formbuilder\Form::dropdown('test',$options);  
         $expected = '<select name="test" id="test" ><optgroup label="Dogs"><option value="Husky">Husky</option><option value="Labrador">Labrador</option></optgroup><optgroup label="Cats"><option value="Maine Coon">Maine Coon</option></optgroup></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
     }
 
     public function testFile() {
 
         $actual = Formbuilder\Form::file('test');  
         $expected = '<input type="file" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     } 
 
@@ -83,7 +83,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::hidden('test');  
         $expected = '<input type="hidden" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -91,7 +91,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::keygen('test');  
         $expected = '<keygen name="test" id="test" >';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     } 
 
@@ -102,20 +102,20 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $options = array('x','y','z');
         $actual = Formbuilder\Form::multicheck('test',$options);  
         $expected = '<input type="checkbox" name="test[]" id="test" value="x" /> x<br/><input type="checkbox" name="test[]" id="test" value="y" /> y<br/><input type="checkbox" name="test[]" id="test" value="z" /> z<br/>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // key/value 
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multicheck('test',$options);  
         $expected = '<input type="checkbox" name="test[]" id="test" value="x" /> xRay<br/><input type="checkbox" name="test[]" id="test" value="y" /> Yellow<br/><input type="checkbox" name="test[]" id="test" value="z" /> Zebra<br/>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
 
         // key/value with preselected values
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multicheck('test',$options,array('x','z'));  
         $expected = '<input type="checkbox" name="test[]" id="test" value="x" checked="checked" /> xRay<br/><input type="checkbox" name="test[]" id="test" value="y" /> Yellow<br/><input type="checkbox" name="test[]" id="test" value="z" checked="checked" /> Zebra<br/>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // Fieldsets with simple options
         $options = array(
@@ -124,7 +124,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
         );
         $actual = Formbuilder\Form::multicheck('test',$options);  
         $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test" value="Husky" /> Husky<br/><input type="checkbox" name="test[]" id="test" value="Labrador" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test" value="Maine Coon" /> Maine Coon<br/></fieldset>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Fieldsets with complex options
         $options = array(
@@ -133,7 +133,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
         );
         $actual = Formbuilder\Form::multicheck('test',$options);  
         $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test" value="husky" /> Husky<br/><input type="checkbox" name="test[]" id="test" value="lab" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test" value="maine" /> Maine Coon<br/></fieldset>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
     }
  
@@ -144,19 +144,19 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $options = array('x','y','z');
         $actual = Formbuilder\Form::multiselect('test',$options);  
         $expected = '<select name="test[]" id="test" multiple="multiple" ><option value="x">x</option><option value="y">y</option><option value="z">z</option></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // key/value 
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multiselect('test',$options);  
         $expected = '<select name="test[]" id="test" multiple="multiple" ><option value="x">xRay</option><option value="y">Yellow</option><option value="z">Zebra</option></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // key/value with preselected values
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multiselect('test',$options,array('x','z'));  
         $expected = '<select name="test[]" id="test" multiple="multiple" ><option value="x" selected="selected">xRay</option><option value="y">Yellow</option><option value="z" selected="selected">Zebra</option></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // Option Groups with simple options
         $options = array(
@@ -165,18 +165,18 @@ class elementTest extends PHPUnit_Framework_TestCase {
         );
         $actual = Formbuilder\Form::multiselect('test',$options);  
         $expected = '<select name="test[]" id="test" multiple="multiple" ><optgroup label="Dogs"><option value="Husky">Husky</option><option value="Labrador">Labrador</option></optgroup><optgroup label="Cats"><option value="Maine Coon">Maine Coon</option></optgroup></select>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
     }
 
     public function testOutput() {
 
         $actual = Formbuilder\Form::output('test',array('x','y'));  
         $expected = '<output name="test" id="test" for="x y" ></output>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
         $actual = Formbuilder\Form::output('test',array('x','y'),123);  
         $expected = '<output name="test" id="test" for="x y" >123</output>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -184,7 +184,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::password('test');  
         $expected = '<input type="password" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -194,26 +194,38 @@ class elementTest extends PHPUnit_Framework_TestCase {
         // Simple Radio
         $options = array('x','y','z');
         $actual = Formbuilder\Form::radio('test',$options);
-        $expected = '<input type="radio" name="test" id="test" value="x" > x<br/><input type="radio" name="test" id="test" value="y" > y<br/><input type="radio" name="test" id="test" value="z" > z<br/>';
-        $this->assertEquals($actual, $expected);
+        $expected = '<input type="radio" name="test" id="test" value="x"> x<br/><input type="radio" name="test" id="test" value="y"> y<br/><input type="radio" name="test" id="test" value="z"> z<br/>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         $options = array('x','y','z');
         $actual = Formbuilder\Form::radio('test',$options,'y');
-        $expected = '<input type="radio" name="test" id="test" value="x" > x<br/><input type="radio" name="test" id="test" value="y" checked="checked" > y<br/><input type="radio" name="test" id="test" value="z" > z<br/>';
-        $this->assertEquals($actual, $expected);        
+        $expected = '<input type="radio" name="test" id="test" value="x"> x<br/><input type="radio" name="test" id="test" value="y" checked="checked" > y<br/><input type="radio" name="test" id="test" value="z" > z<br/>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));        
         
         // key/value 
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::radio('test',$options);  
-        $expected = '<input type="radio" name="test" id="test" value="x" > xRay<br/><input type="radio" name="test" id="test" value="y" > Yellow<br/><input type="radio" name="test" id="test" value="z" > Zebra<br/>';
-        $this->assertEquals($actual, $expected);        
+        $expected = '<input type="radio" name="test" id="test" value="x"> xRay<br/><input type="radio" name="test" id="test" value="y" > Yellow<br/><input type="radio" name="test" id="test" value="z" > Zebra<br/>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));        
     }
 
-    public function testTest() {
+    public function testText() {
 
         $actual = Formbuilder\Form::text('test');  
         $expected = '<input type="text" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        $actual = Formbuilder\Form::text('test','default ""value');  
+        $expected = '<input type="text" name="test" id="test" value="default &quot;&quot;value" />';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field'));  
+        $expected = '<label for="test" class="">Test Field</label> <input type="text" name="test" id="test" value="" />';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+        
+        $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field','description'=>'This is only a test.'));  
+        $expected = '<label for="test" class="">Test Field</label> <input type="text" name="test" id="test" value="" /> <p>This is only a test.</p>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }    
 
@@ -221,18 +233,18 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::textarea('test');  
         $expected = '<textarea name="test" id="test" rows="4" cols="40" ></textarea>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
         $actual = Formbuilder\Form::textarea('test','gnarrrr');  
         $expected = '<textarea name="test" id="test" rows="4" cols="40" >gnarrrr</textarea>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
 
         $args = array();
         $args['rows'] = 5;
         $args['cols'] = 15;
         $actual = Formbuilder\Form::textarea('test','gnarrrr',$args);  
         $expected = '<textarea name="test" id="test" rows="5" cols="15" >gnarrrr</textarea>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -240,7 +252,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::color('test');  
         $expected = '<input type="color" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -248,7 +260,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::date('test');  
         $expected = '<input type="date" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -256,7 +268,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::datetime_local('test');  
         $expected = '<input type="datetime-local" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
     
@@ -265,27 +277,27 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $args['id'] = 'testemail';
         $actual = Formbuilder\Form::email('test','',$args);  
         $expected = '<input type="email" name="test" id="testemail" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
     public function testMonth() {
         $actual = Formbuilder\Form::month('test','',array('extra'=>'class="something"'));  
         $expected = '<input type="month" name="test" id="test" value="" class="something"/>';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
     }
 
     public function testNumber() {
         $actual = Formbuilder\Form::number('test',1,100);  
         $expected = '<input type="number" name="test" id="test" min="1" max="100" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
     }
 
     public function testSearch() {
 
         $actual = Formbuilder\Form::search('test');  
         $expected = '<input type="search" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -293,7 +305,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::time('test');  
         $expected = '<input type="time" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -301,7 +313,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::week('test');  
         $expected = '<input type="week" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -309,7 +321,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::url('test');  
         $expected = '<input type="url" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 
@@ -317,7 +329,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         $actual = Formbuilder\Form::submit('test');  
         $expected = '<input type="submit" name="test" id="test" value="" />';
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
 }

@@ -12,3 +12,11 @@ function my_custom_parser($tpl,$args) {
 		return ob_get_clean();
 	}
 }
+
+
+function trim_html($str) {
+    $str = preg_replace('/class=""/','',$str);
+    $str = preg_replace('/\s+>/','>',$str);
+    $str = preg_replace('/\s+/',' ',$str);
+    return trim($str);
+}

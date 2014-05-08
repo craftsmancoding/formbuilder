@@ -1,19 +1,16 @@
 Formbuilder
 ===========
 
-In memory of my dumb friends.
+In memory of my dumb friends...
 
-I grew tired of repeating myself myself.  This library is built to generate HTML forms in ways that are re-usable.
-I got tired of Symfonic noise with no docs.  Why you no document your code?  
-
-We are doing two things with this package: we are generating HTML forms and we are documenting how its done
-so the nice public peeps can actually use our code.  
+I grew tired of repeating myself myself.  This library is built to generate HTML forms via a reusable library.
+I got tired of Symfonic noise with no docs.  Why you no document your code?  This is inspired from the Laravel
+Formbuilder library, but I needed a low-brow solution that was not dependent on an underlying framework.  
 
 Without further ado...
 
 
 ## Supported Inputs
-
 
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
@@ -50,6 +47,7 @@ Each function has its own signature; some fields require different types of data
 the documentation for each function.
 
 *Code:*
+
     <?php
     print \Formbuilder\Form::text('my_field');
     ?>
@@ -59,23 +57,14 @@ the documentation for each function.
     <input type="text" name="my_field" id="my_field" value="" />
 
 
-I should back up... you need to ensure that you are including the relevant classes.  This is 
-done by including the vendor/autoload.php first:
-
-    <?php
-    require_once '/path/to/formbuilder/vendor/autoload.php';
-    ?>
-
-Once you've done that, the autoloader should find the classes for you without any other include or 
-require statements.
-
-If you've got your namespace-fu going, you can simplify your call to something like this: 
+Just make sure you've included the autoloader:
 
     <?php
     use Formbuilder;
     require_once '/path/to/formbuilder/vendor/autoload.php';
     print Form::text('my_field');
     ?>
+
 
 That's a bit cleaner if it works for you.
 
@@ -84,6 +73,8 @@ That's a bit cleaner if it works for you.
 # Input Types
 
 ## Text
+=======
+
 
 
 ## Textarea
@@ -92,11 +83,10 @@ That's a bit cleaner if it works for you.
 ## Checkbox
 
 
-Form::checkbox('mycheckbox', 1);
+    <?php Form::checkbox('mycheckbox', 1); ?>
 
 
 ## Dropdown
-
 
 A dropdown implements a select field and allows you to select a single value.
 
@@ -133,6 +123,8 @@ By supplying a nested array as your options, you can generate option groups:
     ?>
 
 
+
+
 ------------
 
 # Creating a Form
@@ -150,19 +142,126 @@ Here's an example of some simple usage:
 Here's a more advanced example:
 
     <?php
-        print \Formbuilder\Form::open(array('action'=>'/my/page'))
-            ->text('first_name')
-            ->text('last_name')
-            ->submit('Save')
-            ->close();
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name')
+        ->text('last_name')
+        ->submit('Save')
+        ->close();
+    ?>
+
+
+    <?php
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
+        ->close();    
+    ?>
+
+
+Repopulating form values.
+
+To repopulate values...
+
+    <?php
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
+        ->repopulateWith($_POST)
+        ->close();    
+    ?>
+
+
+## Validation
+
+You want validation... Formbuilder attempts to cover you with a couple patterns that should cover most of your needs.
+
+Validation rules are defined as key value pairs pegged to each field by its name.  Formbuilder offers common validation
+rules for you for convenience.  For all other rules, you can define your own callback function.
+
+    <?php
+    $rules = array(
+        'first_name' => 'required|alpha',
+        'foozlebaum' => function ($val) { 
+            if($val=='xyz') {
+                return;
+            } 
+        }
+    );
+    ?>
+
+### Custom Validation Callbacks
+
+Your custom function should accept a string and return true if validation passes or an error message string if it fails.
+
+## Errors
+
+If you need to keep things really simple and do custom error checking, then you can set an error message
+by passing an "error" attribute to any field:
+
+        <?php print \Formbuilder\Form::text('first_name','',array('error'=>'Something went wrong')); ?>
+
+More often, however, you'll want to pass an array of key/value pairs corresponding to field names.  The Validator class
+helps automate this.
+
+    <?php
+    if ($errors = \Formbuilder\Validator::check($rules,$_POST)) {
+        // handle the form, do something, then redirect etc.
+    }
+    // draw form
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
+        ->repopulate($_POST)
+        ->errors($errors)
+        ->close();    
     ?>
 
 
 
+## Customizing CSS Classes
+
+You can pass a "class" argument to visible fields:
+
+    <?php
+    \Formbuilder\Form::text('first_name', '', array('class'=>'my_css_class'));
+    ?>
+
+For more centralized control, you can set a CSS style for any field type using the setClass() method:
+
+    <?php
+    \Formbuilder\Form::setClass('radio', 'selector-class my-radio-class');
+    ?>
+
+Or do this globally for all instances of a particular field type:
+
+    <?php
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->setClass('text', 'my-text-class')
+        ->text('first_name')
+        ->text('last_name')
+        ->text('title')
+        ->submit('Save')
+        ->close(); 
+    ?>
+
+The CSS class must be set *before* you use the given type of field.  To demonstrate the importance of order, in the 
+following example, the first text field has a class of "x" whereas the second a class of "y":
+
+    <?php
+    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+        ->setClass('text', 'x')
+        ->text('only')
+        ->setClass('text', 'y')
+        ->text('an_example')
+        ->close();    
+    ?>
+
+Note: This is just an example!  Please don't write code that inefficient!  If you need to set different classes on different instances of fields then pass a "class" attribute to the field(s) you need to customize.
+
+
 ## Customizing HTML
 
-
-If the built-in HTML is not meeting your needs, you can override it with your own. You can do this in one of two ways:
+If the HTML generated by these functions does not meet your needs, you can override it in one of two ways:
 you can either pass a formatting string as an argument to each function, or you can set a global template.
 
 To override a single instance of a field, you can pass a formatting template to the function:
@@ -179,13 +278,14 @@ To override a global instance of a formatting template, you can specify a new va
     \Formbuilder\Form::setTpl('text', '<input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="myclass"/>');
     ?>
 
-See the class for various templates available.
+See the class for various templates available.  Remember that most templates include placeholders for [+label+], [+description+], and [+error+] to support labeling, descriptions, and error messages.
 
 
 
 ## Customizing Parsing Function (ADVANCED)
 
-This represents advanced modification: most users should not need to monkey with these behaviors.
+Why are you here?  Do you seriously have issues with the parser?  Sigh.  Well, I don't understand it, but it is possible
+to monkey with the parser behavior if absolutely necessary.  NOTE: This represents advanced modification: most users should never need to mess with this.
 
 Formbuilder parses static text to render its output: it does not parse PHP in its templates by default. 
 This behavior, however, is customizable.  If you wish to use your own parsing function, pass a valid callback
