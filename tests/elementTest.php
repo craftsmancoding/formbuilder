@@ -220,11 +220,11 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field'));  
-        $expected = '<label for="test" class="">Test Field</label> <input type="text" name="test" id="test" value="" />';
+        $expected = '<label for="test" class="textlabel">Test Field</label> <input type="text" name="test" id="test" value="" />';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
         $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field','description'=>'This is only a test.'));  
-        $expected = '<label for="test" class="">Test Field</label> <input type="text" name="test" id="test" value="" /> <p>This is only a test.</p>';
+        $expected = '<label for="test" class="textlabel">Test Field</label> <input type="text" name="test" id="test" value="" /> <p>This is only a test.</p>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }    
