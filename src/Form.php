@@ -17,7 +17,33 @@ class Form {
     public static $output = '';
     public static $values = array();
     // Stores classes for various field types
-    public static $class = array();
+    public static $class = array(
+        'checkbox' => 'checkbox',
+        'file' => 'file',
+        'datalist' => 'datalist',
+        'dropdown' => 'dropdown',
+        'hidden' => 'hidden',
+        'keygen' => 'keygen',
+        'multicheck' => 'multicheck',
+        'multiselect' => 'multiselect',
+        'output' => 'output',
+        'password' => 'password',
+        'radio' => 'radio',
+        'range' => 'range',
+        'text' => 'text',
+        'textarea' => 'textarea',
+        'color' => 'color',
+        'date' => 'date',
+        'datetime_local' => 'datetime_local',
+        'email' => 'email',
+        'month' => 'month',
+        'number' => 'number',
+        'search' => 'search',
+        'time' => 'time',
+        'week' => 'week',
+        'url' => 'url',
+        'submit' => 'submit',
+    );
     public static $attributes = array();
     // new in HTML 5: datalist, keygen, range, output
     // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
@@ -30,7 +56,7 @@ class Form {
             <input type="color" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'datalist'      => '[+label+]
-            <input list="[+id+]" name="[+name+]" value="[+value+]" class="[+class+]" id="[+id+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>
+            <input list="[+id+]" name="[+name+]" value="[+value+]" id="[+id+]" class="[+class+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>
             [+description+]',
         'data'          => '<option value="[+value+]" class="[+class+]">',
         'date'          => '[+label+]<input type="date" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
@@ -104,11 +130,7 @@ class Form {
     );
 
     /**
-<<<<<<< HEAD
-     * Generates final output
-=======
-     * The final output
->>>>>>> a3470cbc0fcb10a9dc19a5027a8680002ac3508d
+     *
      */
     public function __toString() {
         return static::$output;

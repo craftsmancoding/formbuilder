@@ -65,7 +65,7 @@ class formTest extends PHPUnit_Framework_TestCase {
         // Need to reset this after setParser is called
         Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
         $actual = Formbuilder\Form::open()->text('test')->close();    
-        $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="" /></form>';
+        $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
@@ -76,7 +76,7 @@ class formTest extends PHPUnit_Framework_TestCase {
         // Need to reset this after setParser is called
         Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
         $actual = Formbuilder\Form::open('http://somewhere.com/page/x/y?z=123')->text('test')->close();    
-        $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="" /></form>';
+        $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
