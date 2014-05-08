@@ -16,7 +16,7 @@
  *
  */
 
-class autoloadTest extends PHPUnit_Framework_TestCase {
+class formTest extends PHPUnit_Framework_TestCase {
 
         
     public function testParse() {
@@ -63,9 +63,11 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     
     public function testChain() {
     
+/*
         Formbuilder\Form::open()->test('xxx');    
         print Formbuilder\Form::open()->test('test');    
         exit;
+*/
     }
     
 }

@@ -16,7 +16,7 @@
  *
  */
 
-class autoloadTest extends PHPUnit_Framework_TestCase {
+class elementTest extends PHPUnit_Framework_TestCase {
 
     public function testCheckbox() {
 
