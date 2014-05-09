@@ -167,7 +167,7 @@ To repopulate values...
     print \Formbuilder\Form::open(array('action'=>'/my/page'))
         ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
         ->submit('Save')
-        ->repopulateWith($_POST)
+        ->repopulate($_POST)
         ->close();    
     ?>
 

@@ -16,12 +16,15 @@ class Form {
     public static $opened = false; // Form::open() sets this to true, used to group output in method chaining
     public static $output = '';
     public static $values = array();
+    public static $errors = array();
+    
     // Stores classes for various field types
     public static $class = array(
         'checkbox' => 'checkbox',
         'file' => 'file',
         'datalist' => 'datalist',
         'dropdown' => 'dropdown',
+        'error' => 'error',
         'hidden' => 'hidden',
         'keygen' => 'keygen',
         'multicheck' => 'multicheck',
@@ -48,75 +51,100 @@ class Form {
     // new in HTML 5: datalist, keygen, range, output
     // Todo: create HTML 4.01 / HTML5 / XHTML variants (?)
     public static $tpls = array(
-        'checkbox'      => '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+        'checkbox'      => '[+error+]
+            <input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" [+is_checked+][+extra+]/> 
             [+label+]
             [+description+]',
         'color'         => '[+label+]
+            [+error+]
             <input type="color" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'datalist'      => '[+label+]
+            [+error+]
             <input list="[+id+]" name="[+name+]" value="[+value+]" id="[+id+]" class="[+class+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>
             [+description+]',
         'data'          => '<option value="[+value+]" class="[+class+]">',
-        'date'          => '[+label+]<input type="date" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
-        [+description+]',
+        'date'          => '[+label+]
+            [+error+]
+            <input type="date" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            [+description+]',
         'datetime_local'    => '[+label+]
+            [+error+]
             <input type="datetime-local" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'dropdown'      => '[+label+]
+            [+error+]
             <select name="[+name+]" id="[+id+]" [+extra+]>[+options+]</select>
             [+description+]',          
         'email'         => '[+label+]
+            [+error+]
             <input type="email" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
-        'error'         => '<div class="error">[+message+]</div>',
+        'error'         => '<div class="[+class+]">[+message+]</div>',
         'time'         => '[+label+]
+            [+error+]
             <input type="time" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'week'         => '[+label+]
+            [+error+]
             <input type="week" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
-        'url'         => '<input type="url" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>',
+        'url'         => '[+label+]
+            [+error+]
+            <input type="url" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            [+description+]',
         // used by the multicheck
         'fieldset'      => '<fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>',
         'file'          => '[+label+]
+            [+error+]
             <input type="file" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',  
         'hidden'        => '<input type="hidden" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>',
         'keygen'        => '[+label+]
+            [+error+]
             <keygen name="[+name+]" id="[+id+]" [+extra+]>
             [+description+]',
         'month'         => '[+label+]
             <input type="month" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',  
         'multiselect'   => '[+label+]
+            [+error+]
             <select name="[+name+][]" id="[+id+]" multiple="multiple" [+extra+]>[+options+]</select>',
-        'multicheck'    => '<input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>',
+        'multicheck'    => '[+error+]
+            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>',
         'number'        => '[+label+]
+            [+error+]
             <input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'optgroup'      => '<optgroup label="[+label+]">[+options+]</optgroup>',
         'option'        => '<option value="[+value+]" class="[+class+]"[+is_selected+]>[+label+]</option>',
         'output'        => '[+label+]
+            [+error+]
             <output name="[+name+]" id="[+id+]" for="[+for+]" [+extra+]>[+value+]</output>
             [+description+]',
         'password'      => '[+label+]
+            [+error+]
             <input type="password" name="[+name+]" id="[+id+]" value="" [+extra+]/>
             [+description+]',
         'radio'         => '<input type="radio" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]> [+option+]<br/>',
         'range'         => '[+label+]
+            [+error+]
             <input type="range" id="[+id+]" name="[+name+] value="[+value+]" class="[+class+]" min="[+min+]" max="[+max+]" [+extra+]/>
             [+description+]',
-        'search'        => '[+label+]<input type="search" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+        'search'        => '[+label+]
+            [+error+]
+            <input type="search" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'submit'        => '[+label+]
             <input type="submit" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'text'          => '[+label+]
+            [+error+]
             <input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
             [+description+]',
         'textarea'      => '[+label+]
+            [+error+]
             [+description+]
             <textarea name="[+name+]" id="[+id+]" class="[+class+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
         
@@ -252,7 +280,7 @@ class Form {
      * additional methods onto it.
      *
      */
-    public static function chain($output,$args=array()) {
+    public static function chain($output='',$args=array()) {
         if (empty(static::$instance)) {
             static::$instance = new Form();
         }
@@ -318,7 +346,7 @@ class Form {
 
     /**
      * Get and format any errors for the given field.  Errors can be 
-     * passed simply by setting the "error" attribute  for any field, or they
+     * passed simply by setting the "error" attribute for any field, or they
      * can be set separately during validation
      *
      * @param string $id
@@ -326,15 +354,21 @@ class Form {
      * @return string 
      */
     public static function getError($id,$error='') {
-        if (empty($error)) {
-            // Simple in-line error
+        $args = array();
+        // Check for a globally set error
+        if (empty($error) && isset(static::$errors[$id])) {
+            $args['message'] = static::$errors[$id]; 
         }
+        // Simple in-line error
+        else {
+            $args['message'] = $error;
+        }
+        if (empty($args['message'])) return '';
         
         $tpl = static::$tpls['error'];
-        $args = array();
+
         $args['id'] = $id;
-        $args['label'] = $label;
-        $args['class'] = self::getClass('label');
+        $args['class'] = self::getClass('error');
         return self::parse($tpl,$args);
     }
         
@@ -427,7 +461,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
         
         return static::chain(self::parse($tpl,$args));
         
@@ -452,7 +486,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
         return static::chain(self::parse($tpl,$args));  
     }
 
@@ -481,7 +515,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
         return static::chain(self::parse($tpl,$args)); 
     }
 
@@ -576,7 +610,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         return static::chain(self::parse($tpl,$args));
 
     }
@@ -598,7 +632,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));  
     }
 
@@ -618,7 +652,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args)); 
     }
 
@@ -679,7 +713,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         $output = '';
         $values = self::getValue($name,$values);
         
@@ -786,7 +820,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         $values = self::getValue($name,$values);
         
         // Complex with Option Groups
@@ -834,14 +868,22 @@ class Form {
     }
 
     /**
-     * Open a form.  Testing this with method chaining (i.e. fluid interface)
+     * Open a form and initialize settings/values/errors
+     * Testing this with method chaining (i.e. fluid interface)
      *
-     *
+     * @param string $action URL where form gets submitted.
+     * @param array $args any parameters corresponding to placeholders in the tpl
+     * @param boolean $secure
+     * @param string $tpl template string
      */
     public static function open($action='',$args=array(),$secure=true,$tpl=null) {
         static::$instance = new Form();
         static::$opened = true;
         static::$output = '';
+        static::$errors = array();
+        static::$values = array();
+        self::setParser('\\Formbuilder\\Form::defaultParse');
+        
         $args['action'] = htmlentities($action);
         if (!$tpl) $tpl = static::$tpls['form'];
         if (!isset($args['method'])) $args['method'] = 'post';
@@ -874,7 +916,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args)); 
     }
     
@@ -893,7 +935,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args)); 
     }
 
@@ -917,7 +959,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         $output = '';
         $value = self::getValue($name,$default); 
         // Unique key/values
@@ -962,7 +1004,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args)); 
     }
 
@@ -983,7 +1025,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
         return static::chain(self::parse($tpl,$args)); 
     }
 
@@ -1008,7 +1050,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);              
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1036,7 +1078,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1056,7 +1098,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1076,7 +1118,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1096,7 +1138,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1116,7 +1158,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1140,7 +1182,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1160,7 +1202,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1180,7 +1222,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1200,7 +1242,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1220,7 +1262,7 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
@@ -1240,11 +1282,21 @@ class Form {
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        if (isset($args['error'])) $args['error'] = self::getError($args['id'],$args['error']);      
+        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
         return static::chain(self::parse($tpl,$args));
     }
 
 
+
+    /**
+     * Pass an array here identifying any errors for fields keyed off their names.
+     *
+     * @param array $array
+     */
+    public static function errors($array) {
+        static::$errors = (array) $array;
+        return static::chain();
+    }
 
     /**
      * Pass $_POST or $_GET to this function to have the form fields repopulated
@@ -1253,6 +1305,10 @@ class Form {
      */
     public static function repopulate($array) {
         static::$values = (array) $array;
+        return static::chain();
     }
+    
+    
+    
 }
 /*EOF*/

@@ -226,6 +226,12 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field','description'=>'This is only a test.'));  
         $expected = '<label for="test" class="textlabel">Test Field</label> <input type="text" name="test" id="test" value="" class="text" /> <p>This is only a test.</p>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        $actual = Formbuilder\Form::text('test','',array('label'=>'Test Field','error'=>'There was a problem.')); 
+        $expected = '<label for="test" class="textlabel">Test Field</label>
+            <div class="error">There was a problem.</div>
+            <input type="text" name="test" id="test" value="" class="text" />';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }    
 

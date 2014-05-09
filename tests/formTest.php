@@ -82,5 +82,26 @@ class formTest extends PHPUnit_Framework_TestCase {
 
         //$this->assertEquals(trim_html($expected), trim_html($actual));
     }
+
+    public function testErrors() {
+        $actual = Formbuilder\Form::open()->errors(array('test'=>'There is a problem'))->text('test')->close();    
+        $expected = '<form action="" method="post" class="" id="" ><div class="error">There is a problem</div>
+            <input type="text" name="test" id="test" value="" class="text" /></form>';
+
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+    }
+
+/*
+    public function testRepopulate() {
+        $actual = Formbuilder\Form::open()->text('test')->close();    
+        $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
+
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+    }
+*/
+    
+    
     
 }
