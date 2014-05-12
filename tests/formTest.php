@@ -62,9 +62,8 @@ class formTest extends PHPUnit_Framework_TestCase {
     
     
     public function testChain() {
-        // Need to reset this after setParser is called
-        Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
-        $actual = Formbuilder\Form::open()->text('test')->close();    
+
+        $actual = Formbuilder\Form::open()->text('test')->close(); 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
@@ -84,23 +83,41 @@ class formTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testErrors() {
-        $actual = Formbuilder\Form::open()->errors(array('test'=>'There is a problem'))->text('test')->close();    
+        $actual = Formbuilder\Form::open()->setErrors(array('test'=>'There is a problem'))->text('test')->close();    
         $expected = '<form action="" method="post" class="" id="" ><div class="error">There is a problem</div>
             <input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
+        Formbuilder\Form::setErrors(array('test'=>'There is a problem'));
+
+        $actual = Formbuilder\Form::open()->text('test')->close();    
+        $expected = '<form action="" method="post" class="" id="" ><div class="error">There is a problem</div>
+            <input type="text" name="test" id="test" value="" class="text" /></form>';
+
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        // Test merge
+        Formbuilder\Form::setErrors(array('test'=>'There is a problem'));
+        Formbuilder\Form::setErrors(array('test2'=>'There is another problem'));
+        
+        $actual = array('test'=>'There is a problem','test2'=>'There is another problem');
+        $this->assertTrue(isset(Formbuilder\Form::$errors['test']));
+        $this->assertTrue(isset(Formbuilder\Form::$errors['test2']));
+        $this->assertTrue(Formbuilder\Form::$errors['test'] == 'There is a problem');
+        $this->assertTrue(Formbuilder\Form::$errors['test2'] == 'There is another problem');
     }
 
-/*
     public function testRepopulate() {
-        $actual = Formbuilder\Form::open()->text('test')->close();    
-        $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
+        Formbuilder\Form::$errors = array();
+        Formbuilder\Form::setValues(array('test'=>'something'));
+        $actual = Formbuilder\Form::open()->text('test')->close(); 
+
+        $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="something" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
     }
-*/
     
     
     

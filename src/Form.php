@@ -17,6 +17,7 @@ class Form {
     public static $output = '';
     public static $values = array();
     public static $errors = array();
+    private static $stack = array(); // used to produce final output
     
     // Stores classes for various field types
     public static $class = array(
@@ -158,10 +159,24 @@ class Form {
     );
 
     /**
-     *
+     * Final output happens here: we crunch through the stack.
+     * Delaying the parsing till now allows us to do stuff non-linearly 
      */
-    public function __toString() {
-        return static::$output;
+    public function __toString() {        
+        $output = '';
+        foreach (self::$stack as $job) {
+            $output .= self::parse($job['tpl'], $job['args']);
+        }
+        self::$stack = array(); // reset
+        
+        // Wrap with a form? Or is this just an individual bit?
+        if (self::$opened) {
+            self::$attributes['content'] = $output;
+            $tpl = self::$attributes['tpl'];
+            unset(self::$attributes['tpl']);
+            $output = self::parse($tpl, self::$attributes);
+        }
+        return $output;
     }
     
     /**
@@ -215,9 +230,35 @@ class Form {
             self::$class[$key] = $value;
         }
     }
+
+    /**
+     * Set a specific error for the given field identified by its name.
+     *
+     * @param string $fieldname
+     * @param string $errormsg
+     */
+    public static function setError($fieldname,$errormsg='') {
+        if (is_scalar($fieldname) && is_scalar($errormsg)) {
+            static::$errors[$fieldname] = $errormsg;
+        }
+        return static::chain();
+    }
+
+    /**
+     * Pass an array here identifying any errors for fields keyed off their names.
+     * This merges errors.
+     * @param array $array
+     */
+    public static function setErrors(array $array) {
+        foreach ($array as $fieldname => $errormsg) {
+            self::setError($fieldname, $errormsg);
+        }
+        
+        return static::chain();
+    }
     
     /**
-     * You want to do your own parsing thang? Set a callback here?
+     * Seriously?  You want to do your own parsing thang? Ok, set a callback here.
      *
      * @param mixed $callback any valid callback.
      */
@@ -276,36 +317,44 @@ class Form {
 
     /**
      * Used in method chaining: we return an instance of this object
-     * so we can either print its result via __toString() or chain
-     * additional methods onto it.
+     * and keep adding to the self:$stack
+     * The final output occurs via __toString()
      *
+     * @param string $tpl formatting string usually containing [+placeholders+]
+     * @param array $args key/value pairs, keys corresponding to placeholders
+     * @return object instance
      */
-    public static function chain($output='',$args=array()) {
+    public static function chain($tpl='',$args=array()) {
         if (empty(static::$instance)) {
             static::$instance = new Form();
         }
-        if (static::$opened) {
-            static::$output .= $output;
-        }
-        else {
-            static::$output = $output;
+        if ($tpl) {
+            self::$stack[] = array(
+                'tpl' => $tpl,
+                'args' => $args
+            );
         }
         return static::$instance;
     }
 
     /**
-     * Close the form, return the result.
-     *
+     * Close the form and reset stuff
      *
      */
     public function close() {
+//        static::$opened = true;
+        static::$errors = array(); // reset
+        static::$instance = null;
+        return static::chain();
+/*
         static::$instance = null;
         static::$opened = false;
         $tpl = self::getAttribute('tpl');
         if (!$tpl) $tpl = static::$tpls['form'];
         $args = static::$attributes;
         $args['content'] = static::$output;
-        return self::parse($tpl,$args);
+        return static::chain($tpl,$args);  
+*/
     }
 
     /**
@@ -463,7 +512,7 @@ class Form {
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
         
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
         
     }
 
@@ -487,7 +536,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
-        return static::chain(self::parse($tpl,$args));  
+        return static::chain($tpl,$args);  
     }
 
     /**
@@ -516,7 +565,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
 
     /**
@@ -611,7 +660,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
 
     }
 
@@ -633,7 +682,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));  
+        return static::chain($tpl,$args);  
     }
 
     /**
@@ -653,7 +702,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
 
 
@@ -696,6 +745,8 @@ class Form {
      *              <legend>Marvel</legend>
      *              <!-- checkboxes... -->
      *          </fieldset>
+     *
+     * TODO: this is problematic because we are parsing prior to the final __toString() parsing.
      *
      * @param string $name
      * @param array $options either a simple array or key/value hash or a complex array to define optgroup
@@ -863,13 +914,13 @@ class Form {
             }
         }
         
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
 
     }
 
     /**
      * Open a form and initialize settings/values/errors
-     * Testing this with method chaining (i.e. fluid interface)
+     * We rely on the "global" setAttributes here -- we don't put anything substantial onto the stack.
      *
      * @param string $action URL where form gets submitted.
      * @param array $args any parameters corresponding to placeholders in the tpl
@@ -880,21 +931,17 @@ class Form {
         static::$instance = new Form();
         static::$opened = true;
         static::$output = '';
-        static::$errors = array();
-        static::$values = array();
+        static::$stack = array();
         self::setParser('\\Formbuilder\\Form::defaultParse');
         
         $args['action'] = htmlentities($action);
+        $args['secure'] = $secure;
         if (!$tpl) $tpl = static::$tpls['form'];
         if (!isset($args['method'])) $args['method'] = 'post';
         $args['tpl'] = $tpl; // store as an attribute
         static::setAttributes($args);
-        
-        $out = '';
-        if ($secure) {
-            $out = '';
-        }
-        return static::chain($out);
+
+        return static::chain();
     }
     
     /**
@@ -917,7 +964,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
     
     /**
@@ -936,7 +983,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
 
     /**
@@ -1005,7 +1052,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
 
 
@@ -1026,7 +1073,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');
-        return static::chain(self::parse($tpl,$args)); 
+        return static::chain($tpl,$args); 
     }
 
 
@@ -1051,7 +1098,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1079,7 +1126,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1099,7 +1146,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1119,7 +1166,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1139,7 +1186,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1159,7 +1206,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1183,7 +1230,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1203,7 +1250,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1223,7 +1270,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1243,7 +1290,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1263,7 +1310,7 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
     /**
@@ -1283,18 +1330,20 @@ class Form {
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
         $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');      
-        return static::chain(self::parse($tpl,$args));
+        return static::chain($tpl,$args);
     }
 
 
-
     /**
-     * Pass an array here identifying any errors for fields keyed off their names.
+     * You can set values for fields.  
      *
-     * @param array $array
+     * @param string $fieldname
+     * @param mixed $value
      */
-    public static function errors($array) {
-        static::$errors = (array) $array;
+    public static function setValue($fieldname,$value) {
+        if (is_scalar($fieldname)) {
+            static::$values[$fieldname] = $value;
+        }
         return static::chain();
     }
 
@@ -1303,8 +1352,10 @@ class Form {
      *
      * @param array $array
      */
-    public static function repopulate($array) {
-        static::$values = (array) $array;
+    public static function setValues($array) {
+        foreach ($array as $fieldname => $value) {
+            self::setValue($fieldname,$value);
+        }
         return static::chain();
     }
     
