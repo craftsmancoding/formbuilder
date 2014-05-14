@@ -10,6 +10,7 @@ class Form {
 
     // Valid callback
     public static $parser = '\\Formbuilder\\Form::defaultParse';
+    public static $translator = '\\Formbuilder\\Form::defaultTranslator';
     public static $idPrefix = '';
     public static $namePrefix = '';
     public static $instance;
@@ -265,6 +266,15 @@ class Form {
     public static function setParser($callback) {
         static::$parser = $callback;
     }
+
+    /**
+     * Handle translations for field labels, descriptions, and errors
+     *
+     * @param mixed $callback any valid callback.
+     */
+    public static function setTranslator($callback) {
+        static::$translator = $callback;
+    }
     
     /**
      * Override any of our default formatting strings 
@@ -292,6 +302,7 @@ class Form {
      * @param string $end identifies the end of a placeholder
      */
     public static function parse($tpl,$args=array(),$start='[+',$end='+]') {
+//        $parser_callback = (static::$parser) ? static::$parser : 'default';
         return call_user_func_array(static::$parser, array($tpl,$args,$start,$end));
     }
 
@@ -315,6 +326,17 @@ class Form {
         return trim($tpl);
     }
 
+    /**
+     * Override this by using the setTranslator() function to specify a valid callback for your
+     * translation function.
+     *
+     * @param string $value to be translated
+     * @return string
+     */
+    public static function defaultTranslator($value) {
+        return $value;
+    }
+    
     /**
      * Used in method chaining: we return an instance of this object
      * and keep adding to the self:$stack

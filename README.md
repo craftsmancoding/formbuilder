@@ -93,6 +93,12 @@ A dropdown implements a select field and allows you to select a single value.
 
 **Syntax:** `dropdown($name,$options=array(),$value='',$args=array(),$tpl=null)`
 
+### Simple Options
+
+Simple options can be supplied via a simple array:
+
+
+
 ### Example: Creating a range
 
 Use the [range](http://www.php.net/manual/en/function.range.php) function to generate numbers for you, e.g. 1 to 100 in increments of 5:
@@ -130,6 +136,15 @@ By supplying a nested array as your options, you can generate option groups:
 
 # Creating a Form
 
+## Opening a Form
+
+**Syntax:** `open($action='',$args=array(),$secure=true,$tpl=null)`
+
+This handles creating the `<form>` tag.
+
+
+## Building a simple Form
+
 This package was designed to useable in various circumstances, including simple and advanced development flows.
 
 Here's an example of some simple usage:
@@ -143,7 +158,7 @@ Here's an example of some simple usage:
 Here's a more advanced example:
 
     <?php
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
         ->text('first_name')
         ->text('last_name')
         ->submit('Save')
@@ -152,7 +167,7 @@ Here's a more advanced example:
 
 
     <?php
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
         ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
         ->submit('Save')
         ->close();    
@@ -161,18 +176,33 @@ Here's a more advanced example:
 
 Repopulating form values.
 
-To repopulate values...
+To repopulate values, use the *setValues* method.  It is important to set the values before you create your fields.
 
     <?php
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
+        ->setValues($_POST)
         ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
         ->submit('Save')
-        ->repopulate($_POST)
+        ->close();    
+    ?>
+
+Or sometimes you may need to do this in non-contiguous parts on a page:
+
+    <?php
+    print \Formbuilder\Form::setValues($_POST);
+    // ... 
+    print \Formbuilder\Form::open('/my/page')
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
         ->close();    
     ?>
 
 
+
+
 ## Validation
+
+IN PROGRES....
 
 You want validation... Formbuilder attempts to cover you with a couple patterns that should cover most of your needs.
 
@@ -209,11 +239,11 @@ helps automate this.
         // handle the form, do something, then redirect etc.
     }
     // draw form
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
+        ->setValues($_POST)
+        ->setErrors($errors)
         ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
         ->submit('Save')
-        ->repopulate($_POST)
-        ->errors($errors)
         ->close();    
     ?>
 
@@ -236,7 +266,7 @@ For more centralized control, you can set a CSS style for any field type using t
 Or do this globally for all instances of a particular field type:
 
     <?php
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
         ->setClass('text', 'my-text-class')
         ->text('first_name')
         ->text('last_name')
@@ -249,7 +279,7 @@ The CSS class must be set *before* you use the given type of field.  To demonstr
 following example, the first text field has a class of "x" whereas the second a class of "y":
 
     <?php
-    print \Formbuilder\Form::open(array('action'=>'/my/page'))
+    print \Formbuilder\Form::open('/my/page')
         ->setClass('text', 'x')
         ->text('only')
         ->setClass('text', 'y')
