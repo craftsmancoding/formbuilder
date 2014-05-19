@@ -140,14 +140,24 @@ class formTest extends PHPUnit_Framework_TestCase {
     /**
      * Sometimes we need to generate a form completely on the fly via a single array
      */
+    public function testTpls() {
 /*
-    public function testFields() {
         $fields = array(
             'text' => array()
         );
         $actual = Formbuilder\Form::open()->fields($fields)->close(); 
-    }
 */
+
+        $actual = Formbuilder\Form::open()
+            ->setTpl('description', '<p class="description-txt">[+description+]</p>')
+            ->text('NameOnCard','',array('label'=>'Name on Card','description'=>'Something'))
+            ->close();
+        $expected = '<form action="" method="post" class="" id="" ><label for="NameOnCard" class="textlabel">Name on Card</label>
+            <input type="text" name="NameOnCard" id="NameOnCard" value="" class="text" />
+            <p class="description-txt">Something</p></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+    }
     
     
     

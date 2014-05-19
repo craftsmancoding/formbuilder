@@ -221,6 +221,7 @@ class Form {
      */
     public static function setAttributes($array) {
         self::$attributes = $array;
+        return static::chain();
     }
     
     /**
@@ -230,6 +231,7 @@ class Form {
         if (is_scalar($key) && is_scalar($value)) {
             self::$class[$key] = $value;
         }
+        return static::chain();
     }
 
     /**
@@ -265,6 +267,7 @@ class Form {
      */
     public static function setParser($callback) {
         static::$parser = $callback;
+        return static::chain();
     }
 
     /**
@@ -274,6 +277,7 @@ class Form {
      */
     public static function setTranslator($callback) {
         static::$translator = $callback;
+        return static::chain();
     }
     
     /**
@@ -282,6 +286,7 @@ class Form {
      */
     public static function setTpl($name,$str) {
         static::$tpls[$name] = $str;
+        return static::chain();
     }
 
     /**
@@ -290,6 +295,7 @@ class Form {
      */
     public static function setTpls($array) {
         static::$tpls = $array;
+        return static::chain();
     }
     
     /**

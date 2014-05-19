@@ -87,6 +87,11 @@ in the field's formatting template, but there are several special arguments that
 
 **Syntax:** `text($name,$default='',$args=array(),$tpl=null)`
 
+* `$name` _string_ the name of the field (required)
+* `$default` _string_ the default value for the field. This will get overridden by setValues(). (optional)
+* `$args` _array_ any additional arguments to pass to the field. (optional)
+* `$tpl` _string_ formatting string.
+
 ### Examples
 
     <?php print \Formbuilder\Form::text('first_name'); ?>
