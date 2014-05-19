@@ -68,6 +68,17 @@ Just make sure you've included the autoloader:
 
 That's a bit cleaner if it works for you.
 
+
+### Special Arguments
+
+Each type of field can be passed an array of arguments.  Mostly, these will simply correspond to any placeholders 
+in the field's formatting template, but there are several special arguments that trigger special behavior.  These are:
+
+* **label**: if present, the label will get translated and formatted using the label template
+* **description**: if present, the description will get translated and formatted using the description template.
+* **error**: if present, the error message will get translated and formatted with the error template.
+* **value** : this gets ignored!  The field value comes from either the default passed to the field (usually the 2nd argument) or via the value set via setValues();
+
 ---------------------
 
 # Input Types
@@ -76,10 +87,29 @@ That's a bit cleaner if it works for you.
 
 **Syntax:** `text($name,$default='',$args=array(),$tpl=null)`
 
+### Examples
+
+    <?php print \Formbuilder\Form::text('first_name'); ?>
+
+Set a default value:
+
+    <?php print \Formbuilder\Form::text('first_name', 'Bob'); ?> 
+
+Set other parameters via the $args array:
+
+    <?php 
+    print \Formbuilder\Form::text('first_name', 'Bob', 
+        array('label'=>'First Name','description'=>'Your given name','class'=>'important')
+    ); 
+    ?> 
+
+
 
 ## Textarea
 
 **Syntax:** `dropdown($name,$options=array(),$default='',$args=array(),$tpl=null)`
+
+    <?php print \Formbuilder\Form::textarea('bio'); ?>
 
 ## Checkbox
 
@@ -97,6 +127,18 @@ A dropdown implements a select field and allows you to select a single value.
 
 Simple options can be supplied via a simple array:
 
+    <?php
+    print \Formbuilder\Form::dropdown('mydropdown',array('Yes','No','Maybe'));
+    ?>
+
+If you require distinct options/values, then use an associative array:
+
+    <?php
+    print \Formbuilder\Form::dropdown('mydropdown',array('y'=>'Yes','n'=>'No','m'=>'Maybe'));
+    ?>
+
+When using an associative array, the array key is what is passed as the field value and the array value is used as the option label.
+E.g. in the above example, print $_POST['mydropdown'] would print "y" if "Yes" had been selected.
 
 
 ### Example: Creating a range
@@ -176,7 +218,8 @@ Here's a more advanced example:
 
 Repopulating form values.
 
-To repopulate values, use the *setValues* method.  It is important to set the values before you create your fields.
+To populate values, use the *setValues* method.  This is useful if you are editing a database record or if you are repopulating
+the form after failed validation.  It is important to set the values **before** you create your fields.
 
     <?php
     print \Formbuilder\Form::open('/my/page')
@@ -202,7 +245,7 @@ Or sometimes you may need to do this in non-contiguous parts on a page:
 
 ## Validation
 
-IN PROGRES....
+IN PROGRESS....
 
 You want validation... Formbuilder attempts to cover you with a couple patterns that should cover most of your needs.
 

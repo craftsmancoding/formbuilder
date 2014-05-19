@@ -18,6 +18,10 @@
 
 class formTest extends PHPUnit_Framework_TestCase {
 
+    public static function customformelement() {
+    
+    }
+
         
     public function testParse() {
 
@@ -117,7 +121,33 @@ class formTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
+        // Make sure values override
+        Formbuilder\Form::setValues(array('test'=>'something'));
+        $actual = Formbuilder\Form::open()->text('test','else')->close(); 
+
+        $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="something" class="text" /></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+        
+        // Make sure values fall through if set directly in the form tag
+        Formbuilder\Form::setValues(array('test'=>'something'));
+        $actual = Formbuilder\Form::open()->text('test2','else')->close(); 
+        $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test2" id="test2" value="else" class="text" /></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
     }
+    
+    
+    /**
+     * Sometimes we need to generate a form completely on the fly via a single array
+     */
+/*
+    public function testFields() {
+        $fields = array(
+            'text' => array()
+        );
+        $actual = Formbuilder\Form::open()->fields($fields)->close(); 
+    }
+*/
     
     
     
