@@ -15,30 +15,30 @@ Without further ado...
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
 
-* **checkbox** - you can customize the values sent when the box is checked or unchecked.
-* **color** - (HTML 5)
-* **datalist** - a typeahead type dropdown (HTML 5)
-* **date** - (HTML 5)
-* **datetime** - (HTML 5)
-* **datetime_local** - (HTML 5)
-* **dropdown** - a select field, used to select a single option. 
-* **email** - (HTML 5)
-* **file** - used to choose a local file for uploading
-* **hidden** - hidden fields
-* **keygen** - (HTML 5)
-* **month**  - (HTML 5)
-* **multiselect** - a select field used to select multiple options
-* **multicheck** - functionally the same as multiselect, but formatted as multiple checkboxes
-* **number**  - (HTML 5)
-* **output** - used to store calculated values (HTML 5)
-* **password** - a standard password field
-* **radio** - functionally equivalent to a dropdown, but uses radio options
-* **range** - displays a slider for selecting number within a range (HTML 5)
-* **search** - displays a search form (HTML 5)
-* **submit** - a standard submit button
-* **text** - the original
-* **textarea** - a standard textarea
-* *And more...* - you can define custom callbacks for your own field types
+* [[checkbox]] - you can customize the values sent when the box is checked or unchecked.
+* [[color]] - (HTML 5)
+* [[datalist]] - a typeahead type dropdown (HTML 5)
+* [[date]] - (HTML 5)
+* [[datetime]] - (HTML 5)
+* [[datetime_local]] - (HTML 5)
+* [[dropdown]] - a select field, used to select a single option. 
+* [[email]] - (HTML 5)
+* [[file]] - used to choose a local file for uploading
+* [[hidden]] - hidden fields
+* [[keygen]] - (HTML 5)
+* [[month]]  - (HTML 5)
+* [[multiselect]] - a select field used to select multiple options
+* [[multicheck]] - functionally the same as multiselect, but formatted as multiple checkboxes
+* [[number]]  - (HTML 5)
+* [[output]] - used to store calculated values (HTML 5)
+* [[password]] - a standard password field
+* [[radio]] - functionally equivalent to a dropdown, but uses radio options
+* [[range]] - displays a slider for selecting number within a range (HTML 5)
+* [[search]] - displays a search form (HTML 5)
+* [[submit]] - a standard submit button
+* [[text]] - the original
+* [[textarea]] - a standard textarea
+* [And more](custom) - you can define custom callbacks for your own field types
 
 ## Creating Form Elements
 
