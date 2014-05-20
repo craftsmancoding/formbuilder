@@ -314,6 +314,16 @@ class Form {
 
 
     /**
+     * Translate a string -- override this 
+     *
+     * @param string $str
+     * @return string
+     */
+    public static function translate($str) {
+        return call_user_func_array(static::$translator, array($str));
+    }
+
+    /**
      * Parse the template string ($tpl) replacing any placeholders
      * with values from the $args.
      *
@@ -416,7 +426,7 @@ class Form {
         if (empty($desc)) return '';
         $tpl = static::$tpls['description'];
         $args = array();
-        $args['description'] = $desc;
+        $args['description'] = self::translate($desc); // translate
         $args['class'] = self::getClass('description');
         return self::parse($tpl,$args);
     }
@@ -434,11 +444,11 @@ class Form {
         $args = array();
         // Check for a globally set error
         if (empty($error) && isset(static::$errors[$id])) {
-            $args['message'] = static::$errors[$id]; 
+            $args['message'] = self::translate(static::$errors[$id]);  // translate
         }
         // Simple in-line error
         else {
-            $args['message'] = $error;
+            $args['message'] = self::translate($error);
         }
         if (empty($args['message'])) return '';
         
@@ -473,7 +483,7 @@ class Form {
         $tpl = static::$tpls['label'];
         $args = array();
         $args['id'] = $id;
-        $args['label'] = $label;
+        $args['label'] = self::translate($label); // translate
         $args['class'] = self::getClass('label');
         if ($extra_class) {
             $args['class'] = trim($args['class'].' '.$extra_class);

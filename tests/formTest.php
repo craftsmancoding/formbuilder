@@ -156,9 +156,25 @@ class formTest extends PHPUnit_Framework_TestCase {
             <input type="text" name="NameOnCard" id="NameOnCard" value="" class="text" />
             <p class="description-txt">Something</p></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
-
+        // Reset
+        Formbuilder\Form::setTpl('description', '<p class="[+class+]">[+description+]</p>');
+        
     }
     
+    public function testTranslator() {
+    
+        Formbuilder\Form::setTranslator(function($str){ return $str.'xxx';});
+        $actual = Formbuilder\Form::open()
+            ->text('first_name','',array('label'=>'First Name','description'=>'Something'))
+            ->close();
+        $expected = '<form action="" method="post" class="" id="" ><label for="first_name" class="textlabel">First Namexxx</label>
+            <div class="error">xxx</div>
+            <input type="text" name="first_name" id="first_name" value="" class="text" />
+            <p class="">Somethingxxx</p></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+        // Reset
+        Formbuilder\Form::setTranslator('\\Formbuilder\\Form::defaultTranslator');
+    }
     
     
 }

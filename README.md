@@ -246,6 +246,12 @@ Or sometimes you may need to do this in non-contiguous parts on a page:
     ?>
 
 
+-----------------
+
+## Translations
+
+If you are localizing the messages used in your forms, you can register a translation function using the **setTranslator** function.  It just needs a valid callback.  The referenced function will be passed a single string: the value to be translated.  This will be either the label, description, or error message.
+
 
 
 ## Validation
@@ -356,6 +362,16 @@ To override a global instance of a formatting template, you can specify a new va
     <?php
     \Formbuilder\Form::setTpl('text', '<input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="myclass"/>');
     ?>
+    
+Or you can do this inline, but it must be done before the relevant tpl is needed:
+
+    <?php
+    \Formbuilder\Form::open()
+        ->text('this_field_uses_the_default_tpl')
+        ->setTpl'text', '<input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="myclass"/>')
+        ->text('this_field_uses_the_custom_one');
+    ?>
+
 
 See the class for various templates available.  Remember that most templates include placeholders for [+label+], [+description+], and [+error+] to support labeling, descriptions, and error messages.
 
