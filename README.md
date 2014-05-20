@@ -15,29 +15,29 @@ Without further ado...
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
 
-* checkbox - you can customize the values sent when the box is checked or unchecked.
-* color - (HTML 5)
-* datalist - a typeahead type dropdown (HTML 5)
-* date - (HTML 5)
-* datetime - (HTML 5)
-* datetime-local - (HTML 5)
-* dropdown - a select field, used to select a single option. 
-* email - (HTML 5)
-* file - used to choose a local file for uploading
-* hidden - hidden fields
-* keygen - (HTML 5)
-* month  - (HTML 5)
-* multiselect - a select field used to select multiple options
-* multicheck - functionally the same as multiselect, but formatted as multiple checkboxes
-* number  - (HTML 5)
-* output - used to store calculated values (HTML 5)
-* password - a standard password field
-* radio - functionally equivalent to a dropdown, but uses radio options
-* range - displays a slider for selecting number within a range (HTML 5)
-* search - displays a search form (HTML 5)
-* submit - a standard submit button
-* text - the original
-* textarea - a standard textarea
+* **checkbox** - you can customize the values sent when the box is checked or unchecked.
+* **color** - (HTML 5)
+* **datalist** - a typeahead type dropdown (HTML 5)
+* **date** - (HTML 5)
+* **datetime** - (HTML 5)
+* **datetime_local** - (HTML 5)
+* **dropdown** - a select field, used to select a single option. 
+* **email** - (HTML 5)
+* **file** - used to choose a local file for uploading
+* **hidden** - hidden fields
+* **keygen** - (HTML 5)
+* **month**  - (HTML 5)
+* **multiselect** - a select field used to select multiple options
+* **multicheck** - functionally the same as multiselect, but formatted as multiple checkboxes
+* **number**  - (HTML 5)
+* **output** - used to store calculated values (HTML 5)
+* **password** - a standard password field
+* **radio** - functionally equivalent to a dropdown, but uses radio options
+* **range** - displays a slider for selecting number within a range (HTML 5)
+* **search** - displays a search form (HTML 5)
+* **submit** - a standard submit button
+* **text** - the original
+* **textarea** - a standard textarea
 
 
 ## Creating Form Elements
@@ -46,13 +46,13 @@ In the simplest invocation, you just need to call the function corresponding to 
 Each function has its own signature; some fields require different types of data, so review
 the documentation for each function.
 
-*Code:*
+**Code:**
 
     <?php
     print \Formbuilder\Form::text('my_field');
     ?>
 
-*Output:*
+**Output:**
 
     <input type="text" name="my_field" id="my_field" value="" />
 
@@ -85,7 +85,7 @@ in the field's formatting template, but there are several special arguments that
 
 ## Text
 
-**Syntax:** `text($name,$default='',$args=array(),$tpl=null)`
+**Syntax:** `text(string $name, string $default='',array $args=array(),string $tpl=null)`
 
 * `$name` _string_ the name of the field (required)
 * `$default` _string_ the default value for the field. This will get overridden by setValues(). (optional)
@@ -112,21 +112,35 @@ Set other parameters via the $args array:
 
 ## Textarea
 
-**Syntax:** `dropdown($name,$options=array(),$default='',$args=array(),$tpl=null)`
+**Syntax:** `textarea(string $name,string $default='',array $args=array(),string $tpl=null)`
+
+Simple example:
 
     <?php print \Formbuilder\Form::textarea('bio'); ?>
 
+More beefy:
+
+    <?php print \Formbuilder\Form::textarea('saga','Tell your tale here...',array('rows'=>'60','cols'=>'80')); ?>
+
+Textarea fields support a placeholders for "rows" and "cols".
+
+
 ## Checkbox
 
+A standard checkbox will pass either a 1 or 0 value:
 
     <?php Form::checkbox('mycheckbox', 1); ?>
+
+If you want to pass values other than 1 and 0, then pass "checked_value" and "unchecked_value" as arguments:
+
+    <?php Form::checkbox('mycheckbox', 'Yes', array('checked_value'=>'Yes','unchecked_value'=>'No')); ?>
 
 
 ## Dropdown
 
-A dropdown implements a select field and allows you to select a single value.
+A dropdown implements a `<select>` field and allows you to select a single value.
 
-**Syntax:** `dropdown($name,$options=array(),$value='',$args=array(),$tpl=null)`
+**Syntax:** `dropdown(string $name, array $options=array(), string $default='', array $args=array(), string $tpl=null)`
 
 ### Simple Options
 
@@ -176,7 +190,89 @@ By supplying a nested array as your options, you can generate option groups:
     print \Formbuilder\Form::dropdown('mydropdown',$options);
     ?>
 
+## File
 
+A file input will force the form to use the post method and the "enctype" to "multipart/form-data" so that the form 
+can be submitted and processed properly.
+
+**Syntax:** `file(string $name, string $default='', array $args=array(), string $tpl=null)`
+
+## Radio
+
+Radio fields are functionally equivalent to dropdown fields, but the formatting is more problematic because
+of how the formatting strings need to be stacked on top of one another.
+
+**Syntax**: `radio($name,$options=array(),$default='',$args=array(),$tpl=null)`
+
+Simple options:
+
+    <?php
+    print \Formbuilder\Form::radio('attending',array('Yes','No','Maybe'));
+    ?>
+
+Complex options:
+
+    <?php
+    print \Formbuilder\Form::radio('attending',array('y'=>'Yes','n'=>'No','m'=>'Maybe'));
+    ?>
+
+## Multiselect
+
+Similar to the **dropdown** field element, but this element allows users to select an array of options.
+
+**Syntax:** `multiselect($name,$options=array(),$values=array(),$args=array(),$tpl=null)`
+
+Note that the default formatting template (tpl) for multiselect fields defines an array input: `name="[+name+][]"` 
+so you do not need to include "[]" as part of your $name argument.
+
+### Simple Multiselect
+
+    <?php
+    print \Formbuilder\Form::multiselect('genre',array('Scifi','Fiction','Horror','Romance'));
+    ?>
+
+### Option Groups
+
+Just as with the **dropdown()** fields, you can pass nested data to a multiselect field to specify option groups:
+
+    <?php
+    $options = array(
+        'Birds' => array(
+            'bluebird'  => 'Sad Bluebird',
+            'crow'      => 'Black Crow',
+        ),
+        'Mammals' => array(
+            'cow'   => 'Mute Cow',
+            'dog'   => 'Good Dog',
+        )
+        'Reptiles' => array(
+            'croc'  => 'Crocodile',
+            'turtle' => 'Slow Turtle',
+        )
+    );
+    print \Formbuilder\Form::multiselect('categories',$options);
+    ?>
+
+
+## Multicheck
+
+The multicheck field is functionally equivalent to the multiselect field, but using multiple checkboxes offers an 
+alternate user interface for the element.
+
+**Syntax:** `multicheck($name,$options=array(),$values=array(),$args=array(),$tpl=null)`
+
+Note that the default formatting template (tpl) for multicheck fields defines an array input: `name="[+name+][]"` 
+so you do not need to include "[]" as part of your $name argument.
+
+See the multiselect field for examples.
+
+## Hidden
+
+Same signature as a text field.
+
+## Submit
+
+Same signature as a text field.  Don't forget to add a submit button to your form -- Formbuilder will not add it for you.
 
 
 ------------
@@ -410,7 +506,6 @@ MODX uses object-oriented lexicons, so the callback can be an object/method arra
     \Formbuilder\Form::setTranslator(array($modx,'lexicon'));
     ?>
 
-    ?>
 
 Unfortunately, the Formbuilder's translator callback accepts only one parameter, so it cannot take advantage of MODX's 
 placeholders for translation strings.

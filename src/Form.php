@@ -774,7 +774,7 @@ class Form {
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities(self::getValue($name,$default));
-        // Hidden fields shouldn't use this... but just in case
+        // Hidden fields shouldn't use a class (?)... but just in case
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
