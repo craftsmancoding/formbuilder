@@ -426,7 +426,7 @@ use Javascript to handle your date fields you could either specify a custom form
     // Register the callback
     \Formbuilder\Form::register('date', 'my_date');
     // ... 
-    print \Formbuilder\Form::open('https://somesite.com/api/endpoint')
+    print \Formbuilder\Form::open()
         ->text('first_name')
         ->text('last_name')
         ->date('birthday')
