@@ -1,13 +1,13 @@
 Formbuilder
 ===========
 
+Formbuilder is a flexible and framework-independent form-generation library for PHP, built to generate HTML forms.
+
+I grew tired of repeating myself myself and of Symfonic noise with no docs.  Why you no document your code?  
+This is inspired from the Laravel library of the same library, but I needed a low-brow solution that was not 
+dependent on an underlying framework.  
+
 In memory of my dumb friends...
-
-I grew tired of repeating myself myself.  This library is built to generate HTML forms via a reusable library.
-I got tired of Symfonic noise with no docs.  Why you no document your code?  This is inspired from the Laravel
-Formbuilder library, but I needed a low-brow solution that was not dependent on an underlying framework.  
-
-Without further ado...
 
 
 ## Supported Inputs
@@ -15,29 +15,29 @@ Without further ado...
 You can use this class to generate the following types of inputs.  Most of these are verbatim implementations of
 the supported HTML input types, but some (like "dropdown" or "multicheck") offer convenient interfaces.
 
-* [[checkbox]] - you can customize the values sent when the box is checked or unchecked.
-* [[color]] - (HTML 5)
-* [[datalist]] - a typeahead type dropdown (HTML 5)
-* [[date]] - (HTML 5)
-* [[datetime]] - (HTML 5)
-* [[datetime_local]] - (HTML 5)
-* [[dropdown]] - a select field, used to select a single option. 
-* [[email]] - (HTML 5)
-* [[file]] - used to choose a local file for uploading
-* [[hidden]] - hidden fields
-* [[keygen]] - (HTML 5)
-* [[month]]  - (HTML 5)
-* [[multiselect]] - a select field used to select multiple options
-* [[multicheck]] - functionally the same as multiselect, but formatted as multiple checkboxes
-* [[number]]  - (HTML 5)
-* [[output]] - used to store calculated values (HTML 5)
-* [[password]] - a standard password field
-* [[radio]] - functionally equivalent to a dropdown, but uses radio options
-* [[range]] - displays a slider for selecting number within a range (HTML 5)
-* [[search]] - displays a search form (HTML 5)
-* [[submit]] - a standard submit button
-* [[text]] - the original
-* [[textarea]] - a standard textarea
+* [checkbox](https://github.com/craftsmancoding/formbuilder/wiki/checkbox) - you can customize the values sent when the box is checked or unchecked.
+* [color](https://github.com/craftsmancoding/formbuilder/wiki/color) - (HTML 5)
+* [datalist](https://github.com/craftsmancoding/formbuilder/wiki/datalist) - a typeahead type dropdown (HTML 5)
+* [date](https://github.com/craftsmancoding/formbuilder/wiki/date) - (HTML 5)
+* [datetime](https://github.com/craftsmancoding/formbuilder/wiki/datetime) - (HTML 5)
+* [datetime_local](https://github.com/craftsmancoding/formbuilder/wiki/datetime_local) - (HTML 5)
+* [dropdown](https://github.com/craftsmancoding/formbuilder/wiki/dropdown) - a select field, used to select a single option. 
+* [email](https://github.com/craftsmancoding/formbuilder/wiki/email) - (HTML 5)
+* [file](https://github.com/craftsmancoding/formbuilder/wiki/file) - used to choose a local file for uploading
+* [hidden](https://github.com/craftsmancoding/formbuilder/wiki/hidden) - hidden fields
+* [keygen](https://github.com/craftsmancoding/formbuilder/wiki/keygen) - (HTML 5)
+* [month](https://github.com/craftsmancoding/formbuilder/wiki/month)  - (HTML 5)
+* [multiselect](https://github.com/craftsmancoding/formbuilder/wiki/multiselect) - a select field used to select multiple options
+* [multicheck](https://github.com/craftsmancoding/formbuilder/wiki/multiselect) - functionally the same as multiselect, but formatted as multiple checkboxes
+* [number](https://github.com/craftsmancoding/formbuilder/wiki/number)  - (HTML 5)
+* [output](https://github.com/craftsmancoding/formbuilder/wiki/output) - used to store calculated values (HTML 5)
+* [password](https://github.com/craftsmancoding/formbuilder/wiki/password) - a standard password field
+* [radio](https://github.com/craftsmancoding/formbuilder/wiki/radio) - functionally equivalent to a dropdown, but uses radio options
+* [range](https://github.com/craftsmancoding/formbuilder/wiki/range) - displays a slider for selecting number within a range (HTML 5)
+* [search](https://github.com/craftsmancoding/formbuilder/wiki/search) - displays a search form (HTML 5)
+* [submit](https://github.com/craftsmancoding/formbuilder/wiki/submit) - a standard submit button
+* [text](https://github.com/craftsmancoding/formbuilder/wiki/text) - the original
+* [textarea](https://github.com/craftsmancoding/formbuilder/wiki/textarea) - a standard textarea
 * [And more](custom) - you can define custom callbacks for your own field types
 
 ## Creating Form Elements
