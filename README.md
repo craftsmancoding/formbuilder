@@ -38,7 +38,7 @@ the supported HTML input types, but some (like "dropdown" or "multicheck") offer
 * **submit** - a standard submit button
 * **text** - the original
 * **textarea** - a standard textarea
-
+* *And more...* - you can define custom callbacks for your own field types
 
 ## Creating Form Elements
 
@@ -317,7 +317,7 @@ Here's a more advanced example:
     ?>
 
 
-Repopulating form values.
+### Repopulating form values
 
 To populate values, use the *setValues* method.  This is useful if you are editing a database record or if you are repopulating
 the form after failed validation.  It is important to set the values **before** you create your fields.
@@ -333,9 +333,23 @@ the form after failed validation.  It is important to set the values **before** 
 Or sometimes you may need to do this in non-contiguous parts on a page:
 
     <?php
-    print \Formbuilder\Form::setValues($_POST);
+    \Formbuilder\Form::setValues($_POST);
     // ... 
     print \Formbuilder\Form::open('/my/page')
+        ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
+        ->submit('Save')
+        ->close();    
+    ?>
+
+The principle works the same if you want to populate a form with values from a database record, just make sure the keys/values in your
+array line up with the names used in your form:
+
+    <?php
+    $data = get_record_from_database();
+    
+    \Formbuilder\Form::setValues($data);
+    
+    print \Formbuilder\Form::open('/update/my/record')
         ->text('first_name','',array('label'=>'First Name','description'=>'Enter your first name.'))
         ->submit('Save')
         ->close();    
