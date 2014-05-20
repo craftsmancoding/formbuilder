@@ -40,6 +40,22 @@ the supported HTML input types, but some (like "dropdown" or "multicheck") offer
 * [textarea](https://github.com/craftsmancoding/formbuilder/wiki/textarea) - a standard textarea
 * [And more](custom) - you can define custom callbacks for your own field types
 
+## Use in Composer
+
+This has not yet been added to Packagist, so for now your composer.json file would need to reference this repository (or your own fork):
+
+    "require": {
+        "php": ">=5.3",
+        "craftsmancoding/formbuilder": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:craftsmancoding/formbuilder.git"
+        }
+    ]
+
+
 ## Creating Form Elements
 
 In the simplest invocation, you just need to call the function corresponding to an input type.
