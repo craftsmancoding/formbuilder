@@ -69,6 +69,7 @@ class formTest extends PHPUnit_Framework_TestCase {
     public function testChain() {
 
         $actual = Formbuilder\Form::open()->text('test')->close(); 
+//        $actual = Formbuilder\Form::open()->close(); 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));

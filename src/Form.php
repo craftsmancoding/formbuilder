@@ -19,6 +19,8 @@ class Form {
     public static $values = array();
     public static $errors = array();
     private static $stack = array(); // used to produce final output
+//    private static $output = '';
+    
     /**
      * Register a callback function for any built-in form element function, or register your own
      * field types here using 
@@ -170,6 +172,10 @@ class Form {
      * Delaying the parsing till now allows us to do stuff non-linearly 
      */
     public function __toString() {        
+        $out = static::$output;
+        static::$output = ''; // reset
+        return $out;
+/*
         $output = '';
         foreach (static::$stack as $job) {
             $output .= static::parse($job['tpl'], $job['args']);
@@ -184,6 +190,7 @@ class Form {
             $output = static::parse($tpl, static::$attributes);
         }
         return $output;
+*/
     }
     
     /**
@@ -415,10 +422,13 @@ class Form {
             static::$instance = new Form();
         }
         if ($tpl) {
+            static::$output .= static::parse($tpl, $args);
+/*
             static::$stack[] = array(
                 'tpl' => $tpl,
                 'args' => $args
             );
+*/
         }
         return static::$instance;
     }
@@ -429,18 +439,19 @@ class Form {
      */
     public function close() {
 //        static::$opened = true;
+/*
         static::$errors = array(); // reset
         static::$instance = null;
         return static::chain();
-/*
+*/
         static::$instance = null;
         static::$opened = false;
         $tpl = self::getAttribute('tpl');
         if (!$tpl) $tpl = static::$tpls['form'];
         $args = static::$attributes;
         $args['content'] = static::$output;
+        static::$output = '';
         return static::chain($tpl,$args);  
-*/
     }
 
     /**
@@ -1017,7 +1028,7 @@ class Form {
         static::$instance = new Form();
         static::$opened = true;
         static::$output = '';
-        static::$stack = array();
+        //static::$stack = array();
         self::setParser('\\Formbuilder\\Form::defaultParse');
         
         $args['action'] = htmlentities($action);
