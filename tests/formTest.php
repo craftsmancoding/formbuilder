@@ -180,29 +180,22 @@ class formTest extends PHPUnit_Framework_TestCase {
     
     // Test overriding stuff...
     public function testCallbacks() {
-/*
+        // Standalone
         Formbuilder\Form::register('text', 'formTest::customformelement');
-//        Formbuilder\Form::unregister('text');
         $actual = Formbuilder\Form::text('test');
         $expected = '<BRICK></BRICK>';
-        print_r(Formbuilder\Form::$callbacks);
         $this->assertEquals(trim_html($expected), trim_html($actual));
-*/
-        
-/*
+        Formbuilder\Form::unregister('text');        
+
+        // Chained
         $actual = Formbuilder\Form::open()
             ->register('text', 'formTest::customformelement')
             ->text('first_name','',array('label'=>'First Name','description'=>'Something'))
             ->close();
         $expected = '<form action="" method="post" class="" id="" ><BRICK></BRICK></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
-        
-        $actual = Formbuilder\Form::text('test');
-        print '>>>>>'.$actual; exit;
         Formbuilder\Form::unregister('text');
         
-        print_r(Formbuilder\Form::$callbacks);
-*/
     }
     
 }

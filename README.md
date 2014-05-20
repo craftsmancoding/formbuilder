@@ -245,14 +245,179 @@ Or sometimes you may need to do this in non-contiguous parts on a page:
         ->close();    
     ?>
 
+-----------------
+
+## Ad Hoc Text
+
+The simplest option for injecting custom text/html into your form is to use your own formatting templates.  
+Consider the following low-brow hack:
+
+    <?php
+    print \Formbuilder\Form::open()
+        ->text('adhoc','',array(),'<p>A long time ago in a galaxy far, far away...</p>')
+        ->close(); 
+    ?>
+
+By overriding the default template, you effectively neuter the method of any functionality. (Don't do this, by the way: please use the **html()** method instead).
+
+Use the **html()** method to inject random bits of HTML into a form.  You may find this useful when using method-chaining.
+
+**Syntax:** `html($str,$args=array())`
+
+    <?php
+    print \Formbuilder\Form::open()
+        ->text('act1')
+        ->html('<p>I can inject any HTML I want here using the html method.</p>')
+        ->text('act2')
+        ->html('<p>Dear [+first_name+], I can also use placeholders in my text.</p>', array('first_name'=>'Padawan'))
+        ->close(); 
+    ?>
+
+If desired, you can use placeholders in your ad-hoc HTML.
+
+-----------------
+
+## Registering Custom Fields
+
+Although a majority of cases can be handled via custom formatting templates, CSS classes, and custom Javascript to go along with them,
+the need may arise to create your own types of fields or use your own logic in determining how they are drawn and repopulated. 
+For this task, there is the **register()** and **unregister()** functions.
+
+### Defining your Own Field Type
+
+**Syntax:** `register(string $fieldtype, mixed $callback)`
+
+* `$fieldtype` _string_ the name of your type of field. Must be valid as a function name.
+* `$callback` _mixed_ any valid callback
+
+For example, let's say your form must sign a form submission with a value obtained from an API lookup.
+
+    <?php
+    function api_lookup($api_key,$datestamp) {
+        $value = rand(1,1000); // <-- do something cool here
+        $out = '<input type="hidden" name="api_validation" value="'.$value.'" />';
+        return Formbuilder\Form::chain($out); 
+    }
+        
+    // Register the callback
+    \Formbuilder\Form::register('api', 'api_lookup');
+    // ... 
+    print \Formbuilder\Form::open('https://somesite.com/api/endpoint')
+        ->text('first_name')
+        ->text('last_name')
+        ->api('AbCdEf98765',date('Y-m-d H:i:s'))
+        ->submit('Save')
+        ->close();    
+    ?>
+
+The signature for your callback can be whatever you want it to be: the arguments are passed in exactly as they are called.
+Make sure your custom function returns the output via `return Formbuilder\Form::chain()` -- this is what allows a method 
+to be chainable. 
+
+## Overriding an existing Field Type
+
+You can use the **register()** function to override built-in behavior for any field type. For example, if you wish to 
+use Javascript to handle your date fields you could either specify a custom formatting template for your date fields using the **setTpl()** function or by registering your own custom callback for the date field:
+
+
+    <?php
+    function my_date($name,$default='',$args=array()) {
+        // Do calculations or something
+        $out = '<input type="text" class="" name="'.$name.'" value="'.$value.'" />';
+        return Formbuilder\Form::chain($out); 
+    }
+        
+    // Register the callback
+    \Formbuilder\Form::register('date', 'my_date');
+    // ... 
+    print \Formbuilder\Form::open('https://somesite.com/api/endpoint')
+        ->text('first_name')
+        ->text('last_name')
+        ->date('birthday')
+        ->submit('Save')
+        ->close();    
+    ?>
+
+When overriding built-in functionality, it can be a good idea to review the function you are overriding to make sure your 
+new functionality covers the expected use cases.
+
+REMEMBER: most of these types of customizations can be accomplished by using custom field templates.  For example, an easier 
+way to leverage a Javascript date selector might be to set an appropriate CSS class for the date fields in question:
+
+    <!-- See http://jqueryui.com/datepicker/ -->
+    <script>
+        $(function() {
+            $( ".datepicker" ).datepicker();
+        });
+    </script>
+    
+    <?php
+    // This replaces the tpl with an HTML 4 friendly text field and hard-codes the CSS class 
+    \Formbuilder\Form::setTpl('date', '[+label+]
+            [+error+]
+            <input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="datepicker" [+extra+]/>
+            [+description+]');
+     
+    print \Formbuilder\Form::open()
+        ->date('birthday')
+        ->date('anniversary')
+        ->submit('Save')
+        ->close();    
+    ?>
+
+
+
+## Unregistering a Callback
+
+If you need to unregister a callback at any time, you can use the **unregister()** method:
+
+**Syntax:** `unregister(string $fieldtype)`
+
+This will cause the specified fieldtype to revert to its default behavior.
 
 -----------------
 
 ## Translations
 
-If you are localizing the messages used in your forms, you can register a translation function using the **setTranslator** function.  It just needs a valid callback.  The referenced function will be passed a single string: the value to be translated.  This will be either the label, description, or error message.
+If you are localizing the messages used in your forms, you can register a translation function using the **setTranslator()** function.  It just needs a valid callback.  
+
+**Syntax:** `setTranslator(mixed $callback)`
+
+For each field, the following parameters are passed through the translator function:
+
+* **label**
+* **description**
+* **error**
 
 
+### Wordpress
+
+Wordpress's translation function is normally `__()`, but it requires a second argument for the text-domain.  To accomplish this, 
+we must wrap the callback a bit:
+
+    <?php
+    \Formbuilder\Form::setTranslator(function($str){ return __($str,'my-text-domain');});
+    ?>
+
+### MODX
+
+MODX uses object-oriented lexicons, so the callback can be an object/method array:
+
+    <?php
+    // Usually the topic would be loaded somewhere at the start of your script
+    $modx->lexicon->load('topicname');
+    
+    \Formbuilder\Form::setTranslator(array($modx,'lexicon'));
+    ?>
+
+    ?>
+
+Unfortunately, the Formbuilder's translator callback accepts only one parameter, so it cannot take advantage of MODX's 
+placeholders for translation strings.
+
+See http://rtfm.modx.com/revolution/2.x/developing-in-modx/advanced-development/internationalization
+
+------------
 
 ## Validation
 

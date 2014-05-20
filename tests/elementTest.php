@@ -338,4 +338,17 @@ class elementTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
     }
+    
+    
+    public function testHTML() {
+        $actual = Formbuilder\Form::html('This is only a test.');  
+        $expected = 'This is only a test.';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+
+        $actual = Formbuilder\Form::html('Hello [+somebody+]', array('somebody'=>'World','ignore'=>'Me'));  
+        $expected = 'Hello World';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+        
+        
+    }
 }

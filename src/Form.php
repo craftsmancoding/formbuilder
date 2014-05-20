@@ -783,6 +783,16 @@ class Form {
     }
 
     /**
+     * Used for ad-hoc additions to the form
+     *
+     * @param string $str any ad-hoc text, may be used as a formatting string.
+     * @param array $args optional array of key/values to be used as placeholders in the $str
+     */
+    private static function html($str, $args=array()) {
+        return static::chain($str,$args);
+    }
+    
+    /**
      * keygen field (HTML 5 only)
      *
      * @param string $name
