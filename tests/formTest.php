@@ -18,8 +18,9 @@
 
 class formTest extends PHPUnit_Framework_TestCase {
 
-    public static function customformelement() {
-    
+    public static function customformelement($name,$default='',$args=array(),$tpl=null) {
+        $out = '<BRICK></BRICK>';
+        return Formbuilder\Form::chain($out); 
     }
 
         
@@ -176,5 +177,31 @@ class formTest extends PHPUnit_Framework_TestCase {
         Formbuilder\Form::setTranslator('\\Formbuilder\\Form::defaultTranslator');
     }
     
+    // Test overriding stuff...
+    public function testCallbacks() {
+/*
+        Formbuilder\Form::register('text', 'formTest::customformelement');
+//        Formbuilder\Form::unregister('text');
+        $actual = Formbuilder\Form::text('test');
+        $expected = '<BRICK></BRICK>';
+        print_r(Formbuilder\Form::$callbacks);
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+*/
+        
+/*
+        $actual = Formbuilder\Form::open()
+            ->register('text', 'formTest::customformelement')
+            ->text('first_name','',array('label'=>'First Name','description'=>'Something'))
+            ->close();
+        $expected = '<form action="" method="post" class="" id="" ><BRICK></BRICK></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+        
+        $actual = Formbuilder\Form::text('test');
+        print '>>>>>'.$actual; exit;
+        Formbuilder\Form::unregister('text');
+        
+        print_r(Formbuilder\Form::$callbacks);
+*/
+    }
     
 }

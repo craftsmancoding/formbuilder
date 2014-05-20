@@ -19,6 +19,12 @@ class Form {
     public static $values = array();
     public static $errors = array();
     private static $stack = array(); // used to produce final output
+    /**
+     * Register a callback function for any built-in form element function, or register your own
+     * field types here using 
+     */
+    public static $callbacks = array();
+    
     
     // Stores classes for various field types
     public static $class = array(
@@ -165,20 +171,40 @@ class Form {
      */
     public function __toString() {        
         $output = '';
-        foreach (self::$stack as $job) {
-            $output .= self::parse($job['tpl'], $job['args']);
+        foreach (static::$stack as $job) {
+            $output .= static::parse($job['tpl'], $job['args']);
         }
-        self::$stack = array(); // reset
+        static::$stack = array(); // reset
         
         // Wrap with a form? Or is this just an individual bit?
-        if (self::$opened) {
-            self::$attributes['content'] = $output;
-            $tpl = self::$attributes['tpl'];
-            unset(self::$attributes['tpl']);
-            $output = self::parse($tpl, self::$attributes);
+        if (static::$opened) {
+            static::$attributes['content'] = $output;
+            $tpl = (isset(static::$attributes['tpl'])) ? static::$attributes['tpl'] : '';
+            unset(static::$attributes['tpl']);
+            $output = static::parse($tpl, static::$attributes);
         }
         return $output;
     }
+    
+    /**
+     * We can "catch" calls to private methods by using this public function
+     *
+     */
+    public static function __callStatic($name, $arguments) {
+        if (array_key_exists($name, static::$callbacks)) {
+            return call_user_func_array(static::$callbacks[$name], $arguments);
+        }
+
+        return call_user_func_array('\\Formbuilder\\Form::'.$name, $arguments);
+    }
+
+    public function __call($name, $arguments) {
+        if (array_key_exists($name, static::$callbacks)) {
+            return call_user_func_array(static::$callbacks[$name], $arguments);
+        }
+
+        return call_user_func_array(array($this,$name), $arguments);
+    }    
     
     /**
      * Determine if an array is associative. See http://bit.ly/1lIXeN8
@@ -205,6 +231,28 @@ class Form {
             if (is_array($v)) return true;
             return false;
         }
+    }
+
+    /**
+     * Register or override a function that handles generating.
+     *
+     * @param string $fieldtype
+     * @param mixed $callback
+     */
+    public static function register($fieldtype,$callback) {
+        // is_callable ?
+        static::$callbacks[$fieldtype] = $callback;
+        return static::chain();
+    }
+
+    /**
+     * De-register a callback
+     *
+     * @param string $fieldtype
+     */
+    public static function unregister($fieldtype) {
+        unset(static::$callbacks[$fieldtype]);
+        return static::chain();
     }
 
     /**
@@ -367,7 +415,7 @@ class Form {
             static::$instance = new Form();
         }
         if ($tpl) {
-            self::$stack[] = array(
+            static::$stack[] = array(
                 'tpl' => $tpl,
                 'args' => $args
             );
@@ -531,7 +579,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function checkbox($name,$default=0,$args=array(),$tpl=null) {
+    private static function checkbox($name,$default=0,$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];    
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -562,7 +610,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function file($name,$default='',$args=array(),$tpl=null) {
+    private static function file($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -586,7 +634,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function datalist($name,$data=array(),$default='',$args=array(),$tpl=null) {
+    private static function datalist($name,$data=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['data_tpl'])) $args['data_tpl'] = static::$tpls['data'];
@@ -644,7 +692,7 @@ class Form {
      * @param array $args additional arguments including 'option_tpl' and 'optgroup_tpl' for granular format control.
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function dropdown($name,$options=array(),$default='',$args=array(),$tpl=null) {
+    private static function dropdown($name,$options=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['option_tpl'])) $args['option_tpl'] = static::$tpls['option'];
@@ -710,7 +758,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function hidden($name,$default='',$args=array(),$tpl=null) {
+    private static function hidden($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -731,7 +779,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function keygen($name,$args=array(),$tpl=null) {
+    private static function keygen($name,$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -792,7 +840,7 @@ class Form {
      * @param array $args additional arguments including 'field_tpl' for granular format control.
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function multicheck($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
+    private static function multicheck($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!is_array($values)) $values = array($values); // <-- catch typos
@@ -897,7 +945,7 @@ class Form {
      * @param array $args additional arguments including 'option_tpl' and 'optgroup_tpl' for granular format control.
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function multiselect($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
+    private static function multiselect($name,$options=array(),$values=array(),$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!is_array($values)) $values = array($values); // <-- catch typos
@@ -965,7 +1013,7 @@ class Form {
      * @param boolean $secure
      * @param string $tpl template string
      */
-    public static function open($action='',$args=array(),$secure=true,$tpl=null) {
+    private static function open($action='',$args=array(),$secure=true,$tpl=null) {
         static::$instance = new Form();
         static::$opened = true;
         static::$output = '';
@@ -992,7 +1040,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function output($name,$for='',$default='',$args=array(),$tpl=null) {
+    private static function output($name,$for='',$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['for'] = (is_array($for)) ? implode(' ',$for) : $for;
@@ -1012,7 +1060,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function password($name,$args=array(),$tpl=null) {
+    private static function password($name,$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1036,7 +1084,7 @@ class Form {
      * @param string $default value
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function radio($name,$options=array(),$default='',$args=array(),$tpl=null) {
+    private static function radio($name,$options=array(),$default='',$args=array(),$tpl=null) {
         
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1078,7 +1126,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function range($name,$default='',$args=array(),$tpl=null) {
+    private static function range($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         if (!isset($args['min'])) $args['min'] = 1;
@@ -1102,7 +1150,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function text($name,$default='',$args=array(),$tpl=null) {
+    private static function text($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1125,7 +1173,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class     *
      */
-    public static function textarea($name,$default='',$args=array(),$tpl=null) {
+    private static function textarea($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         $args['name'] = self::getName($name);
         $args['value'] = htmlentities(self::getValue($name,$default));
@@ -1142,7 +1190,7 @@ class Form {
     /**
      * Create a nonce single-use form token
      */
-    public static function token() {
+    private static function token() {
         $tpl = static::$tpls['token'];
         
     }
@@ -1155,7 +1203,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function color($name,$default='',$args=array(),$tpl=null) {
+    private static function color($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1175,7 +1223,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function date($name,$default='',$args=array(),$tpl=null) {
+    private static function date($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1195,7 +1243,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function datetime_local($name,$default='',$args=array(),$tpl=null) {
+    private static function datetime_local($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1215,7 +1263,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function email($name,$default='',$args=array(),$tpl=null) {
+    private static function email($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1235,7 +1283,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function month($name,$default='',$args=array(),$tpl=null) {
+    private static function month($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1257,7 +1305,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function number($name,$min=0,$max=10,$default='',$args=array(),$tpl=null) {
+    private static function number($name,$min=0,$max=10,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1279,7 +1327,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function search($name,$default='',$args=array(),$tpl=null) {
+    private static function search($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1299,7 +1347,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function time($name,$default='',$args=array(),$tpl=null) {
+    private static function time($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1319,7 +1367,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function week($name,$default='',$args=array(),$tpl=null) {
+    private static function week($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1339,7 +1387,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function url($name,$default='',$args=array(),$tpl=null) {
+    private static function url($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
@@ -1359,7 +1407,7 @@ class Form {
      * @param array $args additional arguments
      * @param string $tpl defaults to tpl provided by the class
      */
-    public static function submit($name,$default='',$args=array(),$tpl=null) {
+    private static function submit($name,$default='',$args=array(),$tpl=null) {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
         $args['name'] = self::getName($name);
