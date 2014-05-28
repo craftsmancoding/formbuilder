@@ -1,6 +1,8 @@
 <?php
 /**
- * Every chainable function should output indirectly via static::chain
+ * Every chainable function should output indirectly via static::chain -- 
+ * this lets us either chain methods or print them out one by one.
+ *
  * class, label, desc, error
  *
  */
@@ -18,8 +20,6 @@ class Form {
     public static $output = '';
     public static $values = array();
     public static $errors = array();
-    private static $stack = array(); // used to produce final output
-//    private static $output = '';
     
     /**
      * Register a callback function for any built-in form element function, or register your own
@@ -161,36 +161,21 @@ class Form {
         
         'token' => '<input type="hidden" name="[+name+]" value="[+name+]" />',
         
-        'form' => '<form action="[+action+]" method="[+method+]" class="[+class+]" id="[+id+]" [+enctype+]>[+content+]</form>',
+        'open' => '<form action="[+action+]" method="[+method+]" class="[+class+]" id="[+id+]" [+enctype+]>',
+        'close' => '</form>',
         'label'         => '<label for="[+id+]" class="[+class+]">[+label+]</label>',
         'description'   => '<p class="[+class+]">[+description+]</p>',
         
     );
 
     /**
-     * Final output happens here: we crunch through the stack.
-     * Delaying the parsing till now allows us to do stuff non-linearly 
+     * This is what gets called each time a static standalone function is run or
+     * when a single chain is executed.
      */
     public function __toString() {        
         $out = static::$output;
         static::$output = ''; // reset
         return $out;
-/*
-        $output = '';
-        foreach (static::$stack as $job) {
-            $output .= static::parse($job['tpl'], $job['args']);
-        }
-        static::$stack = array(); // reset
-        
-        // Wrap with a form? Or is this just an individual bit?
-        if (static::$opened) {
-            static::$attributes['content'] = $output;
-            $tpl = (isset(static::$attributes['tpl'])) ? static::$attributes['tpl'] : '';
-            unset(static::$attributes['tpl']);
-            $output = static::parse($tpl, static::$attributes);
-        }
-        return $output;
-*/
     }
     
     /**
@@ -363,7 +348,6 @@ class Form {
      * @param string $end identifies the end of a placeholder
      */
     public static function parse($tpl,$args=array(),$start='[+',$end='+]') {
-//        $parser_callback = (static::$parser) ? static::$parser : 'default';
         return call_user_func_array(static::$parser, array($tpl,$args,$start,$end));
     }
 
@@ -410,7 +394,7 @@ class Form {
     
     /**
      * Used in method chaining: we return an instance of this object
-     * and keep adding to the self:$stack
+     *
      * The final output occurs via __toString()
      *
      * @param string $tpl formatting string usually containing [+placeholders+]
@@ -423,12 +407,6 @@ class Form {
         }
         if ($tpl) {
             static::$output .= static::parse($tpl, $args);
-/*
-            static::$stack[] = array(
-                'tpl' => $tpl,
-                'args' => $args
-            );
-*/
         }
         return static::$instance;
     }
@@ -437,20 +415,16 @@ class Form {
      * Close the form and reset stuff
      *
      */
-    public function close() {
-//        static::$opened = true;
-/*
-        static::$errors = array(); // reset
-        static::$instance = null;
-        return static::chain();
-*/
+    public static function close() {
         static::$instance = null;
         static::$opened = false;
-        $tpl = self::getAttribute('tpl');
-        if (!$tpl) $tpl = static::$tpls['form'];
+        static::$values = array();
+        static $errors = array();
+        
+        $tpl = static::$tpls['close'];
         $args = static::$attributes;
-        $args['content'] = static::$output;
-        static::$output = '';
+        //$args['content'] = static::$output;
+        //static::$output = '';
         return static::chain($tpl,$args);  
     }
 
@@ -1035,20 +1009,19 @@ class Form {
      * @param string $tpl template string
      */
     private static function open($action='',$args=array(),$secure=true,$tpl=null) {
-        static::$instance = new Form();
+        static::$instance = null; // new Form();
         static::$opened = true;
         static::$output = '';
-        //static::$stack = array();
         self::setParser('\\Formbuilder\\Form::defaultParse');
         
         $args['action'] = htmlentities($action);
         $args['secure'] = $secure;
-        if (!$tpl) $tpl = static::$tpls['form'];
+        if (!$tpl) $tpl = static::$tpls['open'];
         if (!isset($args['method'])) $args['method'] = 'post';
         $args['tpl'] = $tpl; // store as an attribute
         static::setAttributes($args);
 
-        return static::chain();
+        return static::chain($tpl,$args);
     }
     
     /**

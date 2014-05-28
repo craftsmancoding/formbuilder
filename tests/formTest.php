@@ -15,12 +15,12 @@
  *  phpunit tests/autoloadTest.php
  *
  */
-
-class formTest extends PHPUnit_Framework_TestCase {
+namespace Formbuilder;
+class formTest extends \PHPUnit_Framework_TestCase {
 
     public static function customformelement($name,$default='',$args=array(),$tpl=null) {
         $out = '<BRICK></BRICK>';
-        return Formbuilder\Form::chain($out); 
+        return Form::chain($out); 
     }
 
         
@@ -28,26 +28,26 @@ class formTest extends PHPUnit_Framework_TestCase {
 
         $tpl = 'Hello [+person+]';
         $args = array('person' => 'Milo');
-        $actual = Formbuilder\Form::defaultParse($tpl,$args);  
+        $actual = Form::defaultParse($tpl,$args);  
         $expected = 'Hello Milo';
         $this->assertEquals($actual,$expected);
 
         // Test that unused placeholders are removed
         $tpl = 'Hello [+person+] [+unused+]';
         $args = array('person' => 'Milo');
-        $actual = Formbuilder\Form::defaultParse($tpl,$args);  
+        $actual = Form::defaultParse($tpl,$args);  
         $expected = 'Hello Milo';
         $this->assertEquals($actual,$expected);        
 
         // Alternate placeholder glyphs
         $tpl = 'Hello {{person}}';
         $args = array('person' => 'Milo');
-        $actual = Formbuilder\Form::defaultParse($tpl,$args,'{{','}}');  
+        $actual = Form::defaultParse($tpl,$args,'{{','}}');  
         $expected = 'Hello Milo';
         $this->assertEquals($actual,$expected);        
 
 
-//        $actual = Formbuilder\Form::defaultParse($tpl,$args=array(),$start='[+',$end='+]');        
+//        $actual = Form::defaultParse($tpl,$args=array(),$start='[+',$end='+]');        
     }
 
     /**
@@ -56,10 +56,10 @@ class formTest extends PHPUnit_Framework_TestCase {
      */    
     public function testAlternateParser() {
 
-        Formbuilder\Form::setParser('my_custom_parser');
+        Form::setParser('my_custom_parser');
         $tpl = 'test.php';
         $args = array('person' => 'Milo');
-        $actual = Formbuilder\Form::parse($tpl,$args);  
+        $actual = Form::parse($tpl,$args);  
         $expected = 'Hello Milo';
         $this->assertEquals($actual,$expected);    
     
@@ -67,9 +67,8 @@ class formTest extends PHPUnit_Framework_TestCase {
     
     
     public function testChain() {
-
-        $actual = Formbuilder\Form::open()->text('test')->close(); 
-//        $actual = Formbuilder\Form::open()->close(); 
+        $actual = Form::open()->text('test')->close(); 
+//        $actual = Form::open()->close(); 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
@@ -79,8 +78,8 @@ class formTest extends PHPUnit_Framework_TestCase {
 
     public function testAction() {
         // Need to reset this after setParser is called
-        Formbuilder\Form::setParser('\\Formbuilder\\Form::defaultParse');
-        $actual = Formbuilder\Form::open('http://somewhere.com/page/x/y?z=123')->text('test')->close();    
+        Form::setParser('\\Formbuilder\Form::defaultParse');
+        $actual = Form::open('http://somewhere.com/page/x/y?z=123')->text('test')->close();    
         $expected = '<form action="http://somewhere.com/page/x/y?z=123" method="post" class="" id="" ><input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
@@ -89,50 +88,50 @@ class formTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testErrors() {
-        $actual = Formbuilder\Form::open()->setErrors(array('test'=>'There is a problem'))->text('test')->close();    
+        $actual = Form::open()->setErrors(array('test'=>'There is a problem'))->text('test')->close();    
         $expected = '<form action="" method="post" class="" id="" ><div class="error">There is a problem</div>
             <input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
-        Formbuilder\Form::setErrors(array('test'=>'There is a problem'));
+        Form::setErrors(array('test'=>'There is a problem'));
 
-        $actual = Formbuilder\Form::open()->text('test')->close();    
+        $actual = Form::open()->text('test')->close();    
         $expected = '<form action="" method="post" class="" id="" ><div class="error">There is a problem</div>
             <input type="text" name="test" id="test" value="" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Test merge
-        Formbuilder\Form::setErrors(array('test'=>'There is a problem'));
-        Formbuilder\Form::setErrors(array('test2'=>'There is another problem'));
+        Form::setErrors(array('test'=>'There is a problem'));
+        Form::setErrors(array('test2'=>'There is another problem'));
         
         $actual = array('test'=>'There is a problem','test2'=>'There is another problem');
-        $this->assertTrue(isset(Formbuilder\Form::$errors['test']));
-        $this->assertTrue(isset(Formbuilder\Form::$errors['test2']));
-        $this->assertTrue(Formbuilder\Form::$errors['test'] == 'There is a problem');
-        $this->assertTrue(Formbuilder\Form::$errors['test2'] == 'There is another problem');
+        $this->assertTrue(isset(Form::$errors['test']));
+        $this->assertTrue(isset(Form::$errors['test2']));
+        $this->assertTrue(Form::$errors['test'] == 'There is a problem');
+        $this->assertTrue(Form::$errors['test2'] == 'There is another problem');
     }
 
     public function testRepopulate() {
-        Formbuilder\Form::$errors = array();
-        Formbuilder\Form::setValues(array('test'=>'something'));
-        $actual = Formbuilder\Form::open()->text('test')->close(); 
+        Form::$errors = array();
+        Form::setValues(array('test'=>'something'));
+        $actual = Form::open()->text('test')->close(); 
 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="something" class="text" /></form>';
 
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Make sure values override
-        Formbuilder\Form::setValues(array('test'=>'something'));
-        $actual = Formbuilder\Form::open()->text('test','else')->close(); 
+        Form::setValues(array('test'=>'something'));
+        $actual = Form::open()->text('test','else')->close(); 
 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test" id="test" value="something" class="text" /></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // Make sure values fall through if set directly in the form tag
-        Formbuilder\Form::setValues(array('test'=>'something'));
-        $actual = Formbuilder\Form::open()->text('test2','else')->close(); 
+        Form::setValues(array('test'=>'something'));
+        $actual = Form::open()->text('test2','else')->close(); 
         $expected = '<form action="" method="post" class="" id="" ><input type="text" name="test2" id="test2" value="else" class="text" /></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
@@ -147,10 +146,10 @@ class formTest extends PHPUnit_Framework_TestCase {
         $fields = array(
             'text' => array()
         );
-        $actual = Formbuilder\Form::open()->fields($fields)->close(); 
+        $actual = Form::open()->fields($fields)->close(); 
 */
 
-        $actual = Formbuilder\Form::open()
+        $actual = Form::open()
             ->setTpl('description', '<p class="description-txt">[+description+]</p>')
             ->text('NameOnCard','',array('label'=>'Name on Card','description'=>'Something'))
             ->close();
@@ -159,14 +158,14 @@ class formTest extends PHPUnit_Framework_TestCase {
             <p class="description-txt">Something</p></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         // Reset
-        Formbuilder\Form::setTpl('description', '<p class="[+class+]">[+description+]</p>');
+        Form::setTpl('description', '<p class="[+class+]">[+description+]</p>');
         
     }
     
     public function testTranslator() {
     
-        Formbuilder\Form::setTranslator(function($str){ return $str.'xxx';});
-        $actual = Formbuilder\Form::open()
+        Form::setTranslator(function($str){ return $str.'xxx';});
+        $actual = Form::open()
             ->text('first_name','',array('label'=>'First Name','description'=>'Something'))
             ->close();
         $expected = '<form action="" method="post" class="" id="" ><label for="first_name" class="textlabel">First Namexxx</label>
@@ -175,27 +174,50 @@ class formTest extends PHPUnit_Framework_TestCase {
             <p class="">Somethingxxx</p></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         // Reset
-        Formbuilder\Form::setTranslator('\\Formbuilder\\Form::defaultTranslator');
+        Form::setTranslator('\\Formbuilder\\Form::defaultTranslator');
     }
     
     // Test overriding stuff...
     public function testCallbacks() {
         // Standalone
-        Formbuilder\Form::register('text', 'formTest::customformelement');
-        $actual = Formbuilder\Form::text('test');
+        Form::register('text', '\\Formbuilder\\formTest::customformelement');
+        $actual = Form::text('test');
         $expected = '<BRICK></BRICK>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
-        Formbuilder\Form::unregister('text');        
+        Form::unregister('text');        
 
         // Chained
-        $actual = Formbuilder\Form::open()
-            ->register('text', 'formTest::customformelement')
+        $actual = Form::open()
+            ->register('text', '\\Formbuilder\\formTest::customformelement')
             ->text('first_name','',array('label'=>'First Name','description'=>'Something'))
             ->close();
         $expected = '<form action="" method="post" class="" id="" ><BRICK></BRICK></form>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
-        Formbuilder\Form::unregister('text');
+        Form::unregister('text');
         
     }
+    
+
+    public function testStandaloneFunctions() {
+        $actual = Form::open('/page.html');
+        $actual .= Form::text('test', 'Test');
+        $actual .= Form::submit('','Save');
+        $actual .= Form::close();
+        $expected = '<form action="/page.html" method="post" class="" id="" ><input type="text" name="test" id="test" value="Test" class="text" /><input type="submit" name="" id="" value="Save" class="submit" /></form>';
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+    }
+
+
+    public function testMixChainAndStandaloneFunctions() {
+        Form::unregister('text');
+        $actual = Form::open('/page.html')
+            ->text('test', 'Test');
+        $actual .= Form::submit('','Save');
+        $actual .= Form::close();
+        $expected = '<form action="/page.html" method="post" class="" id="" ><input type="text" name="test" id="test" value="Test" class="text" /><input type="submit" name="" id="" value="Save" class="submit" /></form>';
+
+        $this->assertEquals(trim_html($expected), trim_html($actual));
+    }
+
     
 }
