@@ -101,20 +101,20 @@ class elementTest extends PHPUnit_Framework_TestCase {
         // Simple dropdown
         $options = array('x','y','z');
         $actual = Formbuilder\Form::multicheck('test',$options);  
-        $expected = '<input type="checkbox" name="test[]" id="test" value="x" class="multicheck" /> x<br/><input type="checkbox" name="test[]" id="test" value="y" class="multicheck" /> y<br/><input type="checkbox" name="test[]" id="test" value="z" class="multicheck" /> z<br/>';
+        $expected = '<input type="checkbox" name="test[]" id="test0" value="x" class="multicheck" /> x<br/><input type="checkbox" name="test[]" id="test1" value="y" class="multicheck" /> y<br/><input type="checkbox" name="test[]" id="test2" value="z" class="multicheck" /> z<br/>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // key/value 
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multicheck('test',$options);  
-        $expected = '<input type="checkbox" name="test[]" id="test" value="x" class="multicheck" /> xRay<br/><input type="checkbox" name="test[]" id="test" value="y" class="multicheck" /> Yellow<br/><input type="checkbox" name="test[]" id="test" value="z" class="multicheck" /> Zebra<br/>';
+        $expected = '<input type="checkbox" name="test[]" id="test0" value="x" class="multicheck" /> xRay<br/><input type="checkbox" name="test[]" id="test1" value="y" class="multicheck" /> Yellow<br/><input type="checkbox" name="test[]" id="test2" value="z" class="multicheck" /> Zebra<br/>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
 
         // key/value with preselected values
         $options = array('x'=>'xRay','y'=>'Yellow','z'=>'Zebra');
         $actual = Formbuilder\Form::multicheck('test',$options,array('x','z'));  
-        $expected = '<input type="checkbox" name="test[]" id="test" value="x" class="multicheck" checked="checked" /> xRay<br/><input type="checkbox" name="test[]" id="test" value="y" class="multicheck" /> Yellow<br/><input type="checkbox" name="test[]" id="test" value="z" class="multicheck" checked="checked" /> Zebra<br/>';
+        $expected = '<input type="checkbox" name="test[]" id="test0" value="x" class="multicheck" checked="checked" /> xRay<br/><input type="checkbox" name="test[]" id="test1" value="y" class="multicheck" /> Yellow<br/><input type="checkbox" name="test[]" id="test2" value="z" class="multicheck" checked="checked" /> Zebra<br/>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // Fieldsets with simple options
@@ -123,7 +123,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
             'Cats' => array('Maine Coon'),
         );
         $actual = Formbuilder\Form::multicheck('test',$options);  
-        $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test" value="Husky" class="multicheck" /> Husky<br/><input type="checkbox" name="test[]" id="test" value="Labrador" class="multicheck" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test" value="Maine Coon" class="multicheck" /> Maine Coon<br/></fieldset>';
+        $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test0" value="Husky" class="multicheck" /> Husky<br/><input type="checkbox" name="test[]" id="test1" value="Labrador" class="multicheck" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test2" value="Maine Coon" class="multicheck" /> Maine Coon<br/></fieldset>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Fieldsets with complex options
@@ -132,7 +132,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
             'Cats' => array('maine'=>'Maine Coon'),
         );
         $actual = Formbuilder\Form::multicheck('test',$options);  
-        $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test" value="husky" class="multicheck" /> Husky<br/><input type="checkbox" name="test[]" id="test" value="lab" class="multicheck" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test" value="maine" class="multicheck" /> Maine Coon<br/></fieldset>';
+        $expected = '<fieldset><legend>Dogs</legend><input type="checkbox" name="test[]" id="test0" value="husky" class="multicheck" /> Husky<br/><input type="checkbox" name="test[]" id="test1" value="lab" class="multicheck" /> Labrador<br/></fieldset><fieldset><legend>Cats</legend><input type="checkbox" name="test[]" id="test2" value="maine" class="multicheck" /> Maine Coon<br/></fieldset>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
     }

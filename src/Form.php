@@ -840,7 +840,7 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!is_array($values)) $values = array($values); // <-- catch typos
         if (!isset($args['fieldset_tpl'])) $args['fieldset_tpl'] = static::$tpls['fieldset'];
-        if (!isset($args['id'])) $args['id'] = self::getId($name);
+        $base_id = (isset($args['id'])) ? $args['id'] : self::getId($name);
         $args['name'] = self::getName($name);
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
         if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
@@ -850,6 +850,7 @@ class Form {
         $values = self::getValue($name,$values);
         
         // Complex with Fieldsets
+        $i = 0;
         if (self::isComplex($options)) {
             foreach($options as $legend => $fields) {
                 // <fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>
@@ -857,19 +858,23 @@ class Form {
                 // key/value sub-options
                 if (self::isHash($fields)) {
                     foreach ($fields as $k => $v) {
+                        $args['id'] = $base_id.$i;
                         $args['value'] = htmlentities($k);
                         $args['option'] = $v;
                         $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                         $fieldset_args['fields'] .= self::parse($tpl,$args); 
+                        $i++;
                     }
                 }
                 // simple sub-options
                 else {
                     foreach ($fields as $k) {
+                        $args['id'] = $base_id.$i;
                         $args['value'] = htmlentities($k);
                         $args['option'] = $k;
                         $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                         $fieldset_args['fields'] .= self::parse($tpl,$args);               
+                        $i++;
                     }
                 } 
                 $output .= self::parse($args['fieldset_tpl'],$fieldset_args);
@@ -878,20 +883,24 @@ class Form {
         // Unique key/values
         elseif (self::isHash($options)) {
             foreach ($options as $k => $v) {
+                $args['id'] = $base_id.$i;
                 $args['value'] = htmlentities($k);
                 $args['option'] = $v;
                 $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                 $output .= self::parse($tpl,$args); 
+                $i++;
             }
         }
         // Simple options
         // <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+checked_value+]" [+is_checked+][+extra+]/> [+label+]<br/>
         else {
             foreach ($options as $k) {
+                $args['id'] = $base_id.$i;
                 $args['value'] = htmlentities($k);
                 $args['option'] = $k;
                 $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                 $output .= self::parse($tpl,$args);                 
+                $i++;
             }
         }
         
