@@ -1,10 +1,13 @@
 <?php
 /**
+ * A Class to generate html forms.
+ *
  * Every chainable function should output indirectly via static::chain -- 
  * this lets us either chain methods or print them out one by one.
- *
- * class, label, desc, error
- *
+ * 
+ * Fix the multicheck/checkbox problem: 
+ * http://stackoverflow.com/questions/306252/how-to-align-checkboxes-and-their-labels-consistently-cross-browsers
+ * http://www.karlgroves.com/2011/10/10/accessible-form-labeling-instructions/
  */
 namespace Formbuilder;
 
