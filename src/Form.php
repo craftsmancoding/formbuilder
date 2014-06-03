@@ -127,7 +127,11 @@ class Form {
         //'multicheck'    => '[+error+]
           //                  <label for="[+id+]" style="width:80px;display:inline-block;">[+option+]</label> <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <br/>',
          'multicheck'    => '[+error+]
-                            [+option+] <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <br/>',
+                            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>',
+         'multicheck_outer'    => '[+label+]
+                            [+error+]
+                            [+content+]',
+
         'number'        => '[+label+]
             [+error+]
             <input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" class="[+class+]" [+extra+]/>
@@ -832,7 +836,9 @@ class Form {
      *              <!-- checkboxes... -->
      *          </fieldset>
      *
-     * TODO: this is problematic because we are parsing prior to the final __toString() parsing.
+     * A couple extra tpls come into play here:
+     *  fieldset_tpl : wrap the groups (in complex forms)
+     *  outer_tpl : wrap the final output
      *
      * @param string $name
      * @param array $options either a simple array or key/value hash or a complex array to define optgroup
@@ -845,13 +851,13 @@ class Form {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!is_array($values)) $values = array($values); // <-- catch typos
         if (!isset($args['fieldset_tpl'])) $args['fieldset_tpl'] = static::$tpls['fieldset'];
+        $outer_tpl = (isset($args['outer_tpl'])) ? $args['outer_tpl'] : static::$tpls['multicheck_outer'];
         $base_id = (isset($args['id'])) ? $args['id'] : self::getId($name);
         $args['name'] = self::getName($name);
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
-        //if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
-        if (isset($args['label'])) $args['label'] = '';
+        if (isset($args['label'])) $args['label'] = self::getLabel($base_id,$args['label'],__FUNCTION__.'label');
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-//        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
+        $args['error'] = self::getError($base_id,(isset($args['error']))?$args['error']:'');              
         $output = '';
         $values = self::getValue($name,$values);
         
@@ -909,7 +915,8 @@ class Form {
                 $i++;
             }
         }
-        
+        $args['content'] = $output;
+        $output = self::parse($outer_tpl, $args);
         return static::chain($output);
 
     }
