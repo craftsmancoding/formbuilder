@@ -121,8 +121,10 @@ class Form {
         'multiselect'   => '[+label+]
             [+error+]
             <select name="[+name+][]" id="[+id+]" multiple="multiple" [+extra+]>[+options+]</select>',
-        'multicheck'    => '[+error+]
-            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>',
+        //'multicheck'    => '[+error+]
+          //                  <label for="[+id+]" style="width:80px;display:inline-block;">[+option+]</label> <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <br/>',
+         'multicheck'    => '[+error+]
+                            [+option+] <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <br/>',
         'number'        => '[+label+]
             [+error+]
             <input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" class="[+class+]" [+extra+]/>
@@ -843,9 +845,10 @@ class Form {
         $base_id = (isset($args['id'])) ? $args['id'] : self::getId($name);
         $args['name'] = self::getName($name);
         if (!isset($args['class'])) $args['class'] = htmlentities(self::getClass(__FUNCTION__));
-        if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
+        //if (isset($args['label'])) $args['label'] = self::getLabel($args['id'],$args['label'],__FUNCTION__.'label');
+        if (isset($args['label'])) $args['label'] = '';
         if (isset($args['description'])) $args['description'] = self::getDescription($args['id'],$args['description']);
-        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
+//        $args['error'] = self::getError($args['id'],(isset($args['error']))?$args['error']:'');              
         $output = '';
         $values = self::getValue($name,$values);
         
@@ -860,7 +863,7 @@ class Form {
                     foreach ($fields as $k => $v) {
                         $args['id'] = $base_id.$i;
                         $args['value'] = htmlentities($k);
-                        $args['option'] = $v;
+                        $args['option'] = self::getLabel($args['id'],$v,__FUNCTION__.'label');
                         $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                         $fieldset_args['fields'] .= self::parse($tpl,$args); 
                         $i++;
@@ -871,7 +874,7 @@ class Form {
                     foreach ($fields as $k) {
                         $args['id'] = $base_id.$i;
                         $args['value'] = htmlentities($k);
-                        $args['option'] = $k;
+                        $args['option'] = self::getLabel($args['id'],$k,__FUNCTION__.'label');
                         $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                         $fieldset_args['fields'] .= self::parse($tpl,$args);               
                         $i++;
@@ -885,7 +888,7 @@ class Form {
             foreach ($options as $k => $v) {
                 $args['id'] = $base_id.$i;
                 $args['value'] = htmlentities($k);
-                $args['option'] = $v;
+                 $args['option'] = self::getLabel($args['id'],$v,__FUNCTION__.'label');
                 $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                 $output .= self::parse($tpl,$args); 
                 $i++;
@@ -897,7 +900,7 @@ class Form {
             foreach ($options as $k) {
                 $args['id'] = $base_id.$i;
                 $args['value'] = htmlentities($k);
-                $args['option'] = $k;
+                 $args['option'] = self::getLabel($args['id'],$k,__FUNCTION__.'label');
                 $args['is_checked'] = (in_array($k,$values))? ' checked="checked"': '';
                 $output .= self::parse($tpl,$args);                 
                 $i++;
