@@ -66,106 +66,106 @@ class Form {
     public static $tpls = array(
         'checkbox'      => '[+error+]
             <input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
-            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" [+is_checked+][+extra+]/> 
+            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" style="[+style+]" [+is_checked+][+extra+]/> 
             [+label+]
             [+description+]',
         'color'         => '[+label+]
             [+error+]
-            <input type="color" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="color" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+extra+]/>
             [+description+]',
         'datalist'      => '[+label+]
             [+error+]
-            <input list="[+id+]" name="[+name+]" value="[+value+]" id="[+id+]" class="[+class+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>
+            <input list="[+id+]" name="[+name+]" value="[+value+]" id="[+id+]" class="[+class+]" style="[+style+]" [+extra+]><datalist id="[+id+]">[+data+]</datalist>
             [+description+]',
-        'data'          => '<option value="[+value+]" class="[+class+]">',
+        'data'          => '<option value="[+value+]" class="[+class+]" style="[+style+]">',
         'date'          => '[+label+]
             [+error+]
-            <input type="date" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="date" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+extra+]/>
             [+description+]',
         'datetime_local'    => '[+label+]
             [+error+]
-            <input type="datetime-local" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="datetime-local" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+extra+]/>
             [+description+]',
         'dropdown'      => '[+label+]
             [+error+]
-            <select name="[+name+]" id="[+id+]" [+extra+]>[+options+]</select>
+            <select name="[+name+]" id="[+id+]" class="[+class+]" style="[+style+]" [+extra+]>[+options+]</select>
             [+description+]',          
         'email'         => '[+label+]
             [+error+]
-            <input type="email" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="email" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'error'         => '<div class="[+class+]">[+message+]</div>',
         'time'         => '[+label+]
             [+error+]
-            <input type="time" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="time" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'week'         => '[+label+]
             [+error+]
-            <input type="week" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="week" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'url'         => '[+label+]
             [+error+]
-            <input type="url" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="url" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         // used by the multicheck
         'fieldset'      => '<fieldset><legend>[+legend+]</legend>[+fields+]</fieldset>',
         'file'          => '[+label+]
             [+error+]
-            <input type="file" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="file" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+extra+]/>
             [+description+]',  
-        'hidden'        => '<input type="hidden" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>',
+        'hidden'        => '<input type="hidden" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>',
         'keygen'        => '[+label+]
             [+error+]
-            <keygen name="[+name+]" id="[+id+]" [+extra+]>
+            <keygen name="[+name+]" id="[+id+]" class="[+class+]" style="[+style+]" [+extra+]>
             [+description+]',
         'month'         => '[+label+]
-            <input type="month" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="month" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',  
         'multiselect'   => '[+label+]
             [+error+]
-            <select name="[+name+][]" id="[+id+]" multiple="multiple" [+extra+]>[+options+]</select>',
+            <select name="[+name+][]" id="[+id+]" class="[+class+]" style="[+style+]" multiple="multiple" [+extra+]>[+options+]</select>',
         //'multicheck'    => '[+error+]
           //                  <label for="[+id+]" style="width:80px;display:inline-block;">[+option+]</label> <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <br/>',
          'multicheck'    => '[+error+]
-                            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>',
+                            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>',
          'multicheck_outer'    => '[+label+]
                             [+error+]
                             [+content+]',
 
         'number'        => '[+label+]
             [+error+]
-            <input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="number" name="[+name+]" id="[+id+]" min="[+min+]" max="[+max+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'optgroup'      => '<optgroup label="[+label+]">[+options+]</optgroup>',
         'option'        => '<option value="[+value+]" class="[+class+]"[+is_selected+]>[+label+]</option>',
         'output'        => '[+label+]
             [+error+]
-            <output name="[+name+]" id="[+id+]" for="[+for+]" [+extra+]>[+value+]</output>
+            <output name="[+name+]" id="[+id+]" for="[+for+]" placeholder="[+placeholder+]" [+extra+]>[+value+]</output>
             [+description+]',
         'password'      => '[+label+]
             [+error+]
-            <input type="password" name="[+name+]" id="[+id+]" value="" [+extra+]/>
+            <input type="password" name="[+name+]" id="[+id+]" class="[+class+]" style="[+style+]" value="" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
-        'radio'         => '<input type="radio" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]> [+option+]<br/>',
+        'radio'         => '<input type="radio" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]"[+is_checked+] [+extra+]> [+option+]<br/>',
         'range'         => '[+label+]
             [+error+]
             <input type="range" id="[+id+]" name="[+name+] value="[+value+]" class="[+class+]" min="[+min+]" max="[+max+]" [+extra+]/>
             [+description+]',
         'search'        => '[+label+]
             [+error+]
-            <input type="search" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="search" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'submit'        => '[+label+]
-            <input type="submit" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="submit" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+extra+]/>
             [+description+]',
         'text'          => '[+label+]
             [+error+]
-            <input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" [+extra+]/>
+            <input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" [+extra+]/>
             [+description+]',
         'textarea'      => '[+label+]
             [+error+]
             [+description+]
-            <textarea name="[+name+]" id="[+id+]" class="[+class+]" rows="[+rows+]" cols="[+cols+]" [+extra+]>[+value+]</textarea>',
+            <textarea name="[+name+]" id="[+id+]" class="[+class+]" style="[+style+]" rows="[+rows+]" cols="[+cols+]" placeholder="[+placeholder+]" [+extra+]>[+value+]</textarea>',
         
         
         'token' => '<input type="hidden" name="[+name+]" value="[+name+]" />',
@@ -527,8 +527,12 @@ class Form {
         $args['id'] = $id;
         $args['label'] = self::translate($label); // translate
         $args['class'] = self::getClass('label');
-        if ($extra_class) {
-            $args['class'] = trim($args['class'].' '.$extra_class);
+        $defd_class = self::getClass($extra_class);
+        if ($defd_class) {
+            $args['class'] = trim($args['class'].' '.$defd_class); 
+        }
+        elseif ($extra_class) {
+            $args['class'] = trim($args['class'].' '.$extra_class); 
         }
         return self::parse($tpl,$args);
     }
