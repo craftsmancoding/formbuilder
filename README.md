@@ -1,10 +1,10 @@
 Formbuilder
 ===========
 
-Formbuilder is a flexible and framework-independent form-generation library for PHP, built to generate HTML forms.
+Formbuilder is a flexible framework-independent form-generation library for PHP, built to generate HTML forms.
 
 I grew tired of repeating myself myself and of Symfonic noise with no docs.  Why you no document your code?  
-This is inspired from the Laravel library of the same library, but I needed a low-brow solution that was not 
+This is inspired from the Laravel library of the same name, but I needed a low-brow solution that was not 
 dependent on an underlying framework.  
 
 In memory of my dumb friends...
