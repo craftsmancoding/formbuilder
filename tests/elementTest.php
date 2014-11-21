@@ -22,7 +22,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
 
         // Unchecked
         $actual = Formbuilder\Form::checkbox('test');  
-        $expected = '<input type="hidden" name="test" value="0"/> <input type="checkbox" name="test" id="test" value="1" class="checkbox" />';
+        $expected = '<input type="hidden" name="test" value="0"/> <input type="checkbox" name="test" id="test" value="1" class="checkbox" style="" />';
         $this->assertEquals(trim_html($expected), trim_html($actual));
 
         // Checked 
@@ -52,7 +52,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
         // Simple dropdown
         $options = array('x','y','z');
         $actual = Formbuilder\Form::dropdown('test',$options);  
-        $expected = '<select name="test" id="test" ><option value="x">x</option><option value="y">y</option><option value="z">z</option></select>';
+        $expected = '<select name="test" id="test" class="dropdown" style=""><option value="x">x</option><option value="y">y</option><option value="z">z</option></select>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
         // key/value 
@@ -74,7 +74,7 @@ class elementTest extends PHPUnit_Framework_TestCase {
     public function testFile() {
 
         $actual = Formbuilder\Form::file('test');  
-        $expected = '<input type="file" name="test" id="test" value="" class="file" />';
+        $expected = '<input type="file" name="test" id="test" value="" class="file"  style=""/>';
         $this->assertEquals(trim_html($expected), trim_html($actual));
         
     } 

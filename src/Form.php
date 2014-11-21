@@ -619,7 +619,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function checkbox($name, $default = 0, $args = array(), $tpl = null)
+    protected static function checkbox($name, $default = 0, $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -652,7 +652,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function file($name, $default = '', $args = array(), $tpl = null)
+    protected static function file($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -678,7 +678,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function datalist($name, $data = array(), $default = '', $args = array(), $tpl = null)
+    protected static function datalist($name, $data = array(), $default = '', $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -738,7 +738,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function dropdown($name, $options = array(), $default = '', $args = array(), $tpl = null)
+    protected static function dropdown($name, $options = array(), $default = '', $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -803,7 +803,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function hidden($name, $default = '', $args = array(), $tpl = null)
+    protected static function hidden($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -824,7 +824,7 @@ class Form
      * @param array $args optional array of key/values to be used as placeholders in the $str
      * @return object
      */
-    private static function html($str, $args = array())
+    protected static function html($str, $args = array())
     {
         return static::chain($str, $args);
     }
@@ -838,7 +838,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function keygen($name, $args = array(), $tpl = null)
+    protected static function keygen($name, $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -903,7 +903,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function multicheck($name, $options = array(), $values = array(), $args = array(), $tpl = null)
+    protected static function multicheck($name, $options = array(), $values = array(), $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -1019,7 +1019,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function multiselect($name, $options = array(), $values = array(), $args = array(), $tpl = null)
+    protected static function multiselect($name, $options = array(), $values = array(), $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -1086,7 +1086,7 @@ class Form
      * @param string $tpl template string
      * @return object
      */
-    private static function open($action = '', $args = array(), $secure = true, $tpl = null)
+    protected static function open($action = '', $args = array(), $secure = true, $tpl = null)
     {
         static::$instance = null; // new Form();
         static::$opened = true;
@@ -1114,7 +1114,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function output($name, $for = '', $default = '', $args = array(), $tpl = null)
+    protected static function output($name, $for = '', $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1136,7 +1136,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function password($name, $args = array(), $tpl = null)
+    protected static function password($name, $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1162,7 +1162,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function radio($name, $options = array(), $default = '', $args = array(), $tpl = null)
+    protected static function radio($name, $options = array(), $default = '', $args = array(), $tpl = null)
     {
 
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
@@ -1205,7 +1205,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function range($name, $default = '', $args = array(), $tpl = null)
+    protected static function range($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1231,7 +1231,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function text($name, $default = '', $args = array(), $tpl = null)
+    protected static function text($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1256,7 +1256,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function textarea($name, $default = '', $args = array(), $tpl = null)
+    protected static function textarea($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         $args['name'] = self::getName($name);
@@ -1275,7 +1275,7 @@ class Form
      * Create a nonce single-use form token
      * TODO
      */
-    private static function token()
+    protected static function token()
     {
         $tpl = static::$tpls['token'];
 
@@ -1290,7 +1290,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function color($name, $default = '', $args = array(), $tpl = null)
+    protected static function color($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1312,7 +1312,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function date($name, $default = '', $args = array(), $tpl = null)
+    protected static function date($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1334,7 +1334,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function datetime_local($name, $default = '', $args = array(), $tpl = null)
+    protected static function datetime_local($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1356,7 +1356,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function email($name, $default = '', $args = array(), $tpl = null)
+    protected static function email($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1378,7 +1378,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function month($name, $default = '', $args = array(), $tpl = null)
+    protected static function month($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1402,7 +1402,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function number($name, $min = 0, $max = 10, $default = '', $args = array(), $tpl = null)
+    protected static function number($name, $min = 0, $max = 10, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1426,7 +1426,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function search($name, $default = '', $args = array(), $tpl = null)
+    protected static function search($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1448,7 +1448,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function time($name, $default = '', $args = array(), $tpl = null)
+    protected static function time($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1470,7 +1470,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function week($name, $default = '', $args = array(), $tpl = null)
+    protected static function week($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1492,7 +1492,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function url($name, $default = '', $args = array(), $tpl = null)
+    protected static function url($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
@@ -1514,7 +1514,7 @@ class Form
      * @param string $tpl defaults to tpl provided by the class
      * @return object
      */
-    private static function submit($name, $default = '', $args = array(), $tpl = null)
+    protected static function submit($name, $default = '', $args = array(), $tpl = null)
     {
         if (!$tpl) $tpl = static::$tpls[__FUNCTION__];
         if (!isset($args['id'])) $args['id'] = self::getId($name);
